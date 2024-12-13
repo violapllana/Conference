@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Importoni useNavigate
 
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const navigate = useNavigate();  // Përdorimi i useNavigate
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/register', { username, password });
-      setMessage('Regjistrimi ishte i suksesshëm.');
-      
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 3000);
+      await axios.post('http://localhost:5000/register', { username, password });
+
+      // Pas regjistrimit të suksesshëm, drejtojeni përdoruesin në faqen e login-it
+      navigate('/login');  // Përdorni navigate për të kaluar në login
 
     } catch (error) {
-      setMessage('Gabim gjatë regjistrimit.');
+      console.error("Gabim gjatë regjistrimit:", error);
+      // Mund të shtoni ndonjë trajtim për gabimin nëse dëshironi
     }
   };
 
@@ -61,11 +61,13 @@ const Register = () => {
             Regjistrohu
           </button>
         </form>
-        {message && (
-          <p className={`mt-4 text-center ${message.includes('suksesshëm') ? 'text-green-500' : 'text-red-500'}`}>
-            {message}
+
+        {/* Linku për në faqen e login-it */}
+        <div className="mt-4 text-center">
+          <p className="text-gray-600">
+            Keni një llogari? <a href="/login" className="text-green-600 hover:underline">Kyçu këtu</a>
           </p>
-        )}
+        </div>
       </div>
     </div>
   );

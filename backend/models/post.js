@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Only import sequelize once
+const sequelize = require('../db'); // Lidhja me databazën
 
 const Post = sequelize.define('Post', {
   title: {
@@ -11,7 +11,7 @@ const Post = sequelize.define('Post', {
     allowNull: false,
   },
   image: {
-    type: DataTypes.STRING, // You can store the image path here
+    type: DataTypes.STRING,  // Rruga e imazhit
     allowNull: true,
   },
 }, {

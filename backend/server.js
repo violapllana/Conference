@@ -12,15 +12,14 @@ const rateLimit = require('express-rate-limit');
 const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const sequelize = require('./db');
-const Item = require('./models/item');
 const User = require('./models/user');
-const Post = require('./models/post');
 const ContactForm = require('./models/contactform'); 
+const { createFeedback, getFeedbacks, updateFeedback, deleteFeedback } = require('./controller/feedbackController');
 const { createContactForm, getContactForms, updateContactFormStatus, deleteContactForm } = require('./controller/contactFormController');
 const postRoutes = require('./routes/postRoutes');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 const { createItem, getItems, updateItem, deleteItem } = require('./controller/itemController');
 const { createSponsor, getSponsors, updateSponsor, deleteSponsor } = require('./controller/sponsorController');
-const { createPost, getPosts, updatePost, deletePost } = require('./controller/postController');
 const app = express();
 const router = express.Router();  // Krijohet instanca e router-it
 
@@ -184,6 +183,23 @@ app.put('/sponsors/:id', isAuthenticated, updateSponsor);
 app.delete('/sponsors/:id', isAuthenticated, deleteSponsor);
 
 app.use('/posts', postRoutes);
+
+
+// Importo funksionet për feedback (duhet të krijosh këto funksione më vonë)
+app.use('/feedback', isAuthenticated, feedbackRoutes);
+app.use(cors({
+  origin: process.env.CORS_ALLOWED_ORIGIN || 'http://localhost:3000',
+  credentials: true,
+}));
+
+
+// Rrugët për feedback
+app.post('/feedback', isAuthenticated, createFeedback); // Krijo feedback
+app.get('/feedback', isAuthenticated, getFeedbacks);    // Merr të gjitha feedback-et
+app.put('/feedback/:id', isAuthenticated, updateFeedback); // Përditëso feedback
+app.delete('/feedback/:id', isAuthenticated, deleteFeedback); // Fshi feedback
+
+
 
 // Contact Form routes
 router.post('/send-message', createContactForm);

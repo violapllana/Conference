@@ -1,12 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';  // Add useEffect here
 import axios from 'axios';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 
-// Komponenti për Redaktimin e Postimit
+const AddPost = () => {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const navigate = useNavigate();
+
+  const addPost = async () => {
+    if (!title || !content) {
+      alert('Titulli dhe përmbajtja janë të detyrueshme!');
+      return;
+    }
+    try {
+      const response = await axios.post('http://localhost:5000/posts', { title, content }, { withCredentials: true });
+      if (response.status === 201) {
+        alert('Postimi u krijua me sukses!');
+        navigate('/posts');
+      }
+    } catch (error) {
+      console.error('Gabim gjatë shtimit të postimit:', error.message);
+      alert('Shtimi i postimit dështoi. Ju lutemi provoni përsëri.');
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Shto Postimin</h1>
+      <input
+        className="border border-gray-300 p-2 w-full mb-4"
+        placeholder="Titulli"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <textarea
+        className="border border-gray-300 p-2 w-full mb-4"
+        placeholder="Përmbajtja"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+      />
+      <button className="bg-blue-500 text-white px-4 py-2" onClick={addPost}>Shto Postimin</button>
+    </div>
+  );
+};
+
 const EditPost = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [image, setImage] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -16,7 +56,6 @@ const EditPost = () => {
         const response = await axios.get(`http://localhost:5000/posts/${id}`, { withCredentials: true });
         setTitle(response.data.title);
         setContent(response.data.content);
-        setImage(response.data.image);
       } catch (error) {
         console.error('Gabim gjatë marrjes së postimit:', error.message);
       }
@@ -25,26 +64,13 @@ const EditPost = () => {
     fetchPost();
   }, [id]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-  };
-
   const updatePost = async () => {
     if (!title || !content) {
       alert('Titulli dhe përmbajtja janë të detyrueshme!');
       return;
     }
-
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    if (image) {
-      formData.append('image', image);
-    }
-
     try {
-      await axios.put(`http://localhost:5000/posts/${id}`, formData, { withCredentials: true });
+      await axios.put(`http://localhost:5000/posts/${id}`, { title, content }, { withCredentials: true });
       navigate('/posts');
     } catch (error) {
       console.error('Gabim gjatë përditësimit të postimit:', error.message);
@@ -66,98 +92,11 @@ const EditPost = () => {
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
-      <input
-        type="file"
-        className="mb-4"
-        onChange={handleImageChange}
-      />
       <button className="bg-blue-500 text-white px-4 py-2" onClick={updatePost}>Përditëso Postimin</button>
     </div>
   );
 };
 
-// Komponenti për Shtimin e Postimit
-const AddPost = () => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [image, setImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const navigate = useNavigate();
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-
-    // Krijo preview për imazhin
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreview(previewUrl);
-    }
-  };
-
-  const addPost = async () => {
-    if (!title || !content) {
-      alert('Titulli dhe përmbajtja janë të detyrueshme!');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    if (image) {
-      formData.append('image', image);
-    }
-
-    try {
-      const response = await axios.post('http://localhost:5000/posts', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        withCredentials: true
-      });
-
-      if (response.status === 201) {
-        alert('Postimi u krijua me sukses!');
-        navigate('/posts');
-      }
-    } catch (error) {
-      console.error('Gabim gjatë shtimit të postimit:', error.message);
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Shto Postimin</h1>
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Titulli"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <textarea
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Përmbajtja"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-      />
-      <input
-        type="file"
-        className="mb-4"
-        onChange={handleImageChange}
-      />
-      
-      {/* Preview i imazhit */}
-      {imagePreview && (
-        <div className="mb-4">
-          <p className="text-sm text-gray-500">Imazhi i zgjedhur:</p>
-          <img src={imagePreview} alt="Image Preview" className="w-32 h-32 object-cover" />
-        </div>
-      )}
-
-      <button className="bg-blue-500 text-white px-4 py-2" onClick={addPost}>Shto Postimin</button>
-    </div>
-  );
-};
-
-// Komponenti për Listën e Postimeve
 const PostList = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -178,10 +117,10 @@ const PostList = () => {
     fetchPosts();
   }, []);
 
-  const handleDelete = async (id) => {
+  const deletePost = async (id) => {
     try {
       await axios.delete(`http://localhost:5000/posts/${id}`, { withCredentials: true });
-      setPosts(posts.filter(post => post._id !== id));  // Përditëson listën pas fshirjes
+      setPosts(posts.filter(post => post.id !== id));
     } catch (err) {
       console.error('Gabim gjatë fshirjes së postimit:', err.message);
     }
@@ -192,23 +131,22 @@ const PostList = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">Lista e Postimeve</h1>
+      <h1>Lista e Postimeve</h1>
       {posts.length === 0 ? (
-        <p>Aktualisht nuk ka postime!</p>
+        <p>Nuk ka postime të shtuar.</p>
       ) : (
         <ul>
           {posts.map((post) => (
-            <li key={post._id} className="mb-4 p-4 border rounded-md">
+            <li key={post.id} className="mb-4">
               <h2 className="text-xl font-semibold">{post.title}</h2>
               <p>{post.content}</p>
-              {post.image && <img src={`http://localhost:5000/${post.image}`} alt={post.title} className="mt-2 w-32 h-32 object-cover" />}
-              <div className="mt-4 flex justify-between">
-                <Link to={`/edit-post/${post._id}`} className="bg-yellow-500 text-white px-4 py-2">Redakto</Link>
+              <div className="mt-2">
+                <Link to={`/edit-post/${post.id}`} className="bg-yellow-500 text-white px-4 py-2">Edit</Link>
                 <button
-                  onClick={() => handleDelete(post._id)}
+                  onClick={() => deletePost(post.id)}
                   className="bg-red-500 text-white px-4 py-2 ml-2"
                 >
-                  Fshi
+                  Delete
                 </button>
               </div>
             </li>
@@ -219,4 +157,4 @@ const PostList = () => {
   );
 };
 
-export { EditPost, AddPost, PostList };
+export { AddPost, EditPost, PostList };

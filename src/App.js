@@ -8,52 +8,53 @@ import Home from './components/Home';
 import AboutUs from './components/AboutUs';
 import Menu from "./components/menu";  
 import Dashboard from "./components/Dashboard";  
-import {AddPost , EditPost , PostList} from './components/posts';
+import { AddPost, EditPost, PostList } from './components/posts';
+import { AddFeedback, EditFeedback, FeedbackList } from './components/feedback'; // Importing Feedback components
 import { AddItem, EditItem, ItemList } from './components/CrudTest'; 
 import { AddSponsor, EditSponsor, SponsorList } from './components/sponsor'; 
 import ContactForm from './components/ContactForm';
 import "./App.css"
 
-
-
 function App() {
- 
   return (
     <Router>
       <div>
-     
         <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about-us" element={<AboutUs />} />
-        <Route path="/contact-us" element={<ContactForm />} />
-
-
+          <Route path="/" element={<Home />} />
+    
           <Route path="ItemList" element={<ItemList />} />
           <Route path="/add" element={<AddItem />} />
 
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          
+  
           <Route path="/items" element={<ItemList />} />
-            <Route path="/add" element={<AddItem />} /> 
-            <Route path="/edit/:id" element={<EditItem />} /> 
+          <Route path="/add" element={<AddItem />} /> 
+          <Route path="/edit/:id" element={<EditItem />} /> 
 
+          {/* Sponsor Routes */}
+          <Route path="/sponsors" element={<SponsorList />} />
+          <Route path="/add-sponsor" element={<AddSponsor />} />
+          <Route path="/edit-sponsor/:id" element={<EditSponsor />} />
 
-       {/* Sponsor Routes */}
-       <Route path="/sponsors" element={<SponsorList />} /> {/* Lista e sponsorëve */}
-          <Route path="/add-sponsor" element={<AddSponsor />} /> {/* Shto sponsor */}
-          <Route path="/edit-sponsor/:id" element={<EditSponsor />} /> {/* Redakto sponsor */}
-
+          {/* Post Routes */}
           <Route path="/posts" element={<PostList />} />
-        <Route path="/add-post" element={<AddPost />} />
-        <Route path="/edit-post/:id" element={<EditPost />} />
+          <Route path="/add-post" element={<AddPost />} />
+          <Route path="/edit-post/:id" element={<EditPost />} />
+
+          {/* Feedback Routes */}
+          <Route path="/feedback" element={<FeedbackList />} /> 
+          <Route path="/add-feedback" element={<AddFeedback />} /> 
+          <Route path="/edit-feedback/:id" element={<EditFeedback />} /> 
+
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact-us" element={<ContactForm />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
           {/* Authentication Routes */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-
 
           <Route path="*" element={<NoMatch />} /> {/* Për rrugët e paidentifikuara */}
         </Routes>
