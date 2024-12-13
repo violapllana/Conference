@@ -4,14 +4,14 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NoMatch from './components/nomatch/noMatch';
 import Register from './components/Register';
 import Login from './components/Login';
-import { AddItem, EditItem, ItemList } from './components/CrudTest'; // Import CRUD components
-import { AddSponsor, EditSponsor, SponsorList } from './components/sponsor'; // Import Sponsor components
 import Home from './components/Home';
 import AboutUs from './components/AboutUs';
-import ContactForm from './components/ContactForm';
-import Menu from "./components/menu";  // Import Menu Page
-import AdminDashboard from "./components/Dashboard/admindashboard";  // Import Menu Page
+import Menu from "./components/menu";  
+import Dashboard from "./components/Dashboard";  
 import {AddPost , EditPost , PostList} from './components/posts';
+import { AddItem, EditItem, ItemList } from './components/CrudTest'; 
+import { AddSponsor, EditSponsor, SponsorList } from './components/sponsor'; 
+import ContactForm from './components/ContactForm';
 import "./App.css"
 
 
@@ -27,13 +27,14 @@ function App() {
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contact-us" element={<ContactForm />} />
 
+
           <Route path="ItemList" element={<ItemList />} />
           <Route path="/add" element={<AddItem />} />
 
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/admin-panel" element={<AdminDashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           
           <Route path="/items" element={<ItemList />} />
             <Route path="/add" element={<AddItem />} /> 
