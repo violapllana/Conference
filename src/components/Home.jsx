@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from 'react-router-dom';
+import heroImage from "./image.png";
 
 const MenaxhimiKonferencave = () => {
   return (
@@ -39,26 +41,29 @@ const MenaxhimiKonferencave = () => {
 
       {/* Hero Section */}
       <section
-        className="relative text-center text-white py-32 bg-cover bg-center"
-        style={{ backgroundImage: "url('hero-bg.jpg')" }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-        <div className="relative z-10">
-          <h1 className="text-5xl font-bold mb-4 leading-tight">
-            Mirësevini në Menaxhimin e Konferencave
-          </h1>
-          <p className="text-xl mb-8">
-            Platforma jonë është dizajnuar për të përmbushur nevojat e çdo organizatori të eventeve.
-          </p>
-          <a
-            href="/menu"
-            className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-4 rounded-xl text-lg font-semibold transition duration-300"
-          >
-            Fillo Tani
-          </a>
-        </div>
-      </section>
+  id="hero"
+  style={{
+    backgroundImage: `url(${heroImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    height: "100vh", // Use full viewport height
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "white",
+    textShadow: "0 2px 5px rgba(0, 0, 0, 0.7)",
+    padding: "0 20px", // Ensure some padding for smaller screens
+  }}
+>
+  <h1 style={{ fontSize: "4rem", fontWeight: "700" }}>Mirësevini në Platformën tonë</h1>
+  <p style={{ fontSize: "1.5rem", fontWeight: "400", maxWidth: "700px", textAlign: "center" }}>
+    Organizoni konferenca dhe menaxhoni sponsorë me lehtësi!
+  </p>
+  <a href="/menu" className="btn btn-warning btn-lg mt-3">Shiko më shumë</a>
 
+</section>
       {/* Features Section */}
       <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 text-center">

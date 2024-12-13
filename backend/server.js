@@ -16,15 +16,13 @@ const Item = require('./models/item');
 const User = require('./models/user');
 const Post = require('./models/post');
 const ContactForm = require('./models/contactform'); 
-const{ createContactForm, getContactForms, updateContactFormStatus, deleteContactForm } = require('./controller/contactFormController');
+const { createContactForm, getContactForms, updateContactFormStatus, deleteContactForm } = require('./controller/contactFormController');
 const postRoutes = require('./routes/postRoutes');
 const { createItem, getItems, updateItem, deleteItem } = require('./controller/itemController');
 const { createSponsor, getSponsors, updateSponsor, deleteSponsor } = require('./controller/sponsorController');
-const { createPost, getPosts , updatePost, deletePost } = require('./controller/postController');
+const { createPost, getPosts, updatePost, deletePost } = require('./controller/postController');
 const app = express();
-const router = express.Router();
-
-const Pjesmarresi = require('./models/Pjesmarresi');
+const router = express.Router();  // Krijohet instanca e router-it
 
 // Configure session middleware with secure settings
 app.use(session({
@@ -44,7 +42,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-// Configure Helmet  extra security headers
+// Configure Helmet extra security headers
 app.use(helmet());
 
 // Configure rate limiting for DDoS protection
@@ -102,7 +100,6 @@ passport.deserializeUser(async (id, done) => {
 const isAuthenticated = (req, res, next) => {
   const token = req.cookies['ubtsecured'];
   if (!token) {
-
     return res.status(401).json({ error: 'Kërkohet autentifikimi.' });
   }
   jwt.verify(token, process.env.JWT_SECRET || 'supersecret', (err, user) => {
@@ -141,30 +138,6 @@ app.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
-app.post('/add-participant/:itemId', isAuthenticated, async (req, res) => {
-  const { itemId } = req.params;
-  const userId = req.user.id; // Get the logged-in user ID from the session
-
-  try {
-    // Check if the conference exists
-    const item = await Item.findByPk(itemId);
-    if (!item) {
-      return res.status(404).json({ message: 'Konferenca nuk u gjet.' });
-    }
-
-    // Add participant
-    const newParticipant = await Pjesmarresi.create({
-      Pjesmarresi: req.user.username,  // Store the username or any other info of the participant
-      itemId: itemId,
-    });
-
-    res.status(200).json({ message: 'Pjesëmarrësi është shtuar me sukses.', participant: newParticipant });
-  } catch (error) {
-    console.error('Error adding participant:', error);
-    res.status(500).json({ message: 'Ka ndodhur një gabim gjatë shtimit të pjesëmarrësit.' });
-  }
-});
-
 // Route to get the logged-in user's information
 app.get('/user', isAuthenticated, (req, res) => {
   res.json({ user: req.user });
@@ -174,7 +147,6 @@ app.get('/user', isAuthenticated, (req, res) => {
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
-  console.log(req.body)
   const hash = await bcrypt.hash(password, 10);
   try {
     const user = await User.create({ username, password: hash, role: 'user' });
@@ -182,14 +154,6 @@ app.post('/register', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
-
-app.get('/api/numri_pjesmarresve', (req, res) => {
-  const query = 'SELECT COUNT(*) AS numri FROM Pjesmarresi'; // Ndrysho emrin e tabelës dhe fushës sipas nevojës
-  db.query(query, (err, result) => {
-    if (err) throw err;
-    res.json({ numri: result[0].numri });
-  });
 });
 
 // Logout route
@@ -219,13 +183,15 @@ app.get('/sponsors', isAuthenticated, getSponsors);
 app.put('/sponsors/:id', isAuthenticated, updateSponsor);
 app.delete('/sponsors/:id', isAuthenticated, deleteSponsor);
 
-app.use('/posts', postRoutes); 
+app.use('/posts', postRoutes);
 
-//Contact Form
+// Contact Form routes
 router.post('/send-message', createContactForm);
 router.get('/messages', getContactForms);
 router.put('/update-status/:id', updateContactFormStatus);
 router.delete('/delete/:id', deleteContactForm);
+
+app.use('/api', router);  // Kjo lidh rrugët e router-it me /api
 
 app.post('/api/send-message', async (req, res) => {
   const { emri, email, mesazhi } = req.body;
@@ -242,12 +208,13 @@ app.post('/api/send-message', async (req, res) => {
     res.status(500).json({ message: 'Gabim në server.' });
   }
 });
+
 // Initialize server and ensure database and table creation
 const initializeDatabase = async () => {
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
     app.listen(process.env.PORT, () => {
-      console.log(`Serveri po punon neë portin ${process.env.PORT}`);
+      console.log(`Serveri po punon në portin ${process.env.PORT}`);
     });
   } catch (error) {
     console.error('Gabim gjatë inicializimit të databazës:', error);
