@@ -1,28 +1,15 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Lidhja me databazën
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../db'); // assuming sequelize connection is in db.js
 
 const Sponsor = sequelize.define('Sponsor', {
   name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
-  email: {
+  details: {
     type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      isEmail: true,
-    },
-  },
-  phone: {
-    type: DataTypes.STRING,
-    allowNull: true, 
-  },
-  address: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-}, {
-  timestamps: true, 
+    allowNull: true
+  }
 });
 
 module.exports = Sponsor;
