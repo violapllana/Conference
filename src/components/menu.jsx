@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -46,103 +45,93 @@ const Menu = () => {
   };
 
   return (
-    <nav className="bg-gray-800 text-white p-6 rounded-lg shadow-md">
-      <ul className="flex flex-col space-y-6"> {/* Flex column for vertical stack */}
-        
-        {/* Main "Konferencat" link */}
-        <li className="flex items-center">
-          <Link
-            to="/items"
-            className="hover:bg-blue-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-lg font-semibold"
-          >
-            Konferencat
-          </Link>
-        </li>
+    <div className="font-sans text-gray-800 bg-gray-100 min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="bg-blue-600 shadow-md">
+        <nav className="flex justify-between items-center px-8 py-6 text-white">
+          <div className="text-3xl font-extrabold">Menaxhimi i Konferencave</div>
+          <ul className="flex space-x-6 text-lg">
+            <li><a href="/" className="hover:text-teal-300 transition duration-200">Home</a></li>
+            <li><a href="/about-us" className="hover:text-teal-300 transition duration-200">About Us</a></li>
+            <li><a href="" className="hover:text-teal-300 transition duration-200">Workshops</a></li>
+            <li><a href="#" className="hover:text-teal-300 transition duration-200">Event Highlights</a></li>
+            <li><a href="/contact-us" className="hover:text-teal-300 transition duration-200">Contact</a></li>
+          </ul>
+        </nav>
+      </header>
 
-        {/* Dynamically display the added items with name and description */}
-        {items.map((item) => (
-          <li
-            key={item.id}
-            className="bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
-          >
-            {/* Container for each conference */}
-            <Link
-              to={`/items/${item.id}`}
-              className="block mb-4 hover:bg-blue-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold"
-            >
-              <span className="block">{item.name}</span>
-            </Link>
-
-            {/* Description of the conference */}
-            <p className="text-sm text-gray-400">{item.description}</p>
+      {/* Secondary Navigation for "Konferencat" */}
+      <nav className="bg-gray-300 text-black p-4 rounded-none shadow-md mt-0">
+        <ul className="flex flex-col space-y-6">
+          <li className="flex items-center">
+            <div className="text-2xl font-semibold">Konferencat</div>
           </li>
-        ))}
 
-        {/* Main "Sponsorët" link */}
-        <li className="flex items-center">
-          <Link
-            to="/sponsors"
-            className="hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-lg font-semibold"
-          >
-            Sponsorët
-          </Link>
-        </li>
+          {/* Dynamically display the added items with name and description */}
+          {items.length > 0 ? (
+            items.map((item) => (
+              <li key={item.id} className="bg-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <Link to={`/items/${item.id}`} className="block mb-4 hover:bg-blue-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold">
+                  <span className="block">{item.name}</span>
+                </Link>
+                <p className="text-sm text-gray-600">{item.description}</p>
+              </li>
+            ))
+          ) : (
+            <p>No conferences found.</p>
+          )}
 
-        {/* Dynamically display the added sponsors with name, email, and phone */}
-        {sponsors.map((sponsor) => (
-          <li
-            key={sponsor.id}
-            className="bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
-          >
-            {/* Container for each sponsor */}
-            <Link
-              to={`/sponsors/${sponsor.id}`}
-              className="block mb-4 hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold"
-            >
-              <span className="block">{sponsor.name}</span>
-            </Link>
-
-            {/* Email of the sponsor */}
-            <p className="text-sm text-gray-400">Email: {sponsor.email}</p>
-
-            {/* Phone number of the sponsor */}
-            <p className="text-sm text-gray-400">Telefon: {sponsor.phone}</p>
-
-            {/* Description of the sponsor */}
-            <p className="text-sm text-gray-400">{sponsor.description}</p>
+          {/* Main "Sponsorët" link */}
+          <li className="flex items-center">
+            <div className="text-2xl font-semibold">Sponsorët</div>
           </li>
-        ))}
 
-        {/* Main "Postimet" link */}
-        <li className="flex items-center">
-          <Link
-            to="/posts"
-            className="hover:bg-yellow-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-lg font-semibold"
-          >
-            Postimet
-          </Link>
-        </li>
+          {/* Dynamically display the added sponsors with name, email, and phone */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sponsors.length > 0 ? (
+              sponsors.map((sponsor) => (
+                <li key={sponsor.id} className="bg-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <h1 to={`/sponsors/${sponsor.id}`} className="block mb-4 hover:bg-green-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold">
+                    <span className="block">{sponsor.name}</span>
+                  </h1>
+                  <div className="flex flex-col text-sm text-gray-600">
+                    <p>Email: {sponsor.email}</p>
+                    <p>Telefon: {sponsor.phone}</p>
+                    <p>Adresa: {sponsor.address}</p>
+                  </div>
+                </li>
+              ))
+            ) : (
+              <p>No sponsors found.</p>
+            )}
+          </div>
 
-        {/* Dynamically display the added posts with title and content */}
-        {posts.map((post) => (
-          <li
-            key={post.id}
-            className="bg-gray-700 p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
-          >
-            {/* Container for each post */}
-            <Link
-              to={`/posts/${post.id}`}
-              className="block mb-4 hover:bg-yellow-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold"
-            >
-              <span className="block">{post.title}</span>
-            </Link>
-
-            {/* Content of the post */}
-            <p className="text-sm text-gray-400">{post.content}</p>
+          {/* Main "Postimet" link */}
+          <li className="flex items-center">
+            <div className="text-2xl font-semibold">Postimet</div>
           </li>
-        ))}
-      </ul>
-    </nav>
+
+          {/* Dynamically display the added posts with title and content */}
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <li key={post.id} className="bg-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <h1 to={`/posts/${post.id}`} className="block mb-4 hover:bg-yellow-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold">
+                  <span className="block">{post.title}</span>
+                </h1>
+                <p className="text-sm text-gray-600">{post.content}</p>
+              </li>
+            ))
+          ) : (
+            <p>No posts found.</p>
+          )}
+        </ul>
+      </nav>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white text-center py-6 mt-auto">
+        &copy; 2024 Menaxhimi i Konferencave. Të gjitha të drejtat të rezervuara.
+      </footer>
+    </div>
   );
 };
 
