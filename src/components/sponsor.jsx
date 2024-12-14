@@ -129,85 +129,65 @@ const AddSponsor = () => {
   );
 };
 
-// // Komponenti për Listën e Sponsorëve
-// const SponsorList = () => {
-//   const [sponsors, setSponsors] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
+// Komponenti për Listën e Sponsorëve
+const SponsorList = () => {
+  const [sponsors, setSponsors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-//   useEffect(() => {
-//     const fetchSponsors = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:5000/sponsors', { withCredentials: true });
-//         setSponsors(response.data);
-//       } catch (err) {
-//         setError(err.message);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
+  useEffect(() => {
+    const fetchSponsors = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/sponsors', { withCredentials: true });
+        setSponsors(response.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-//     fetchSponsors();
-//   }, []);
+    fetchSponsors();
+  }, []);
 
-//   const deleteSponsor = async (id) => {
-//     try {
-//       await axios.delete(`http://localhost:5000/sponsors/${id}`, { withCredentials: true });
-//       setSponsors(sponsors.filter(sponsor => sponsor.id !== id));
-//     } catch (err) {
-//       console.error('Gabim gjatë fshirjes së sponsorit:', err.message);
-//     }
-//   };
+  const deleteSponsor = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/sponsors/${id}`, { withCredentials: true });
+      setSponsors(sponsors.filter(sponsor => sponsor.id !== id));
+    } catch (err) {
+      console.error('Gabim gjatë fshirjes së sponsorit:', err.message);
+    }
+  };
 
-//   if (loading) return <p>Po ngarkohen sponsorët...</p>;
-//   if (error) return <p>Gabim: {error}</p>;
+  if (loading) return <p>Po ngarkohen sponsorët...</p>;
+  if (error) return <p>Gabim: {error}</p>;
 
-//   return (
-//     <div>
-//       <h1>Lista e Sponsorëve</h1>
-//       {sponsors.length === 0 ? (
-//         <p>Nuk ka sponsorë të shtuar.</p>
-//       ) : (
-//         <ul>
-//           {sponsors.map((sponsor) => (
-//             <li key={sponsor.id} className="mb-4">
-//               <h2 className="text-xl font-semibold">{sponsor.name}</h2>
-//               <p>Email: {sponsor.email}</p>
-//               <p>Telefon: {sponsor.phone}</p>
-//               <p>Adresa: {sponsor.address}</p>
-//               <div className="mt-2">
-//                 <Link to={`/edit-sponsor/${sponsor.id}`} className="bg-yellow-500 text-white px-4 py-2">Redakto</Link>
-//                 <button
-//                   onClick={() => deleteSponsor(sponsor.id)}
-//                   className="bg-red-500 text-white px-4 py-2 ml-2"
-//                 >
-//                   Fshi
-//                 </button>
-//               </div>
-//             </li>
-//           ))}
-//         </ul>
-//       )}
-//     </div>
-//   );
-// };
-const SponsorList = ({ sponsors, onEdit, onDelete }) => {
   return (
     <div>
-      {sponsors.map((sponsor) => (
-        <div key={sponsor.id} className="list-item">
-          <h3>{sponsor.name}</h3>
-          <p>Email: {sponsor.email}</p>
-          <p>Telefon: {sponsor.phone}</p>
-          <p>Adresa: {sponsor.address}</p>
-          <button onClick={() => onEdit(sponsor)} className="btn-edit">
-            Redakto
-          </button>
-          <button onClick={() => onDelete(sponsor.id)} className="btn-delete">
-            Fshi
-          </button>
-        </div>
-      ))}
+      <h1>Lista e Sponsorëve</h1>
+      {sponsors.length === 0 ? (
+        <p>Nuk ka sponsorë të shtuar.</p>
+      ) : (
+        <ul>
+          {sponsors.map((sponsor) => (
+            <li key={sponsor.id} className="mb-4">
+              <h2 className="text-xl font-semibold">{sponsor.name}</h2>
+              <p>Email: {sponsor.email}</p>
+              <p>Telefon: {sponsor.phone}</p>
+              <p>Adresa: {sponsor.address}</p>
+              <div className="mt-2">
+                <Link to={`/edit-sponsor/${sponsor.id}`} className="bg-yellow-500 text-white px-4 py-2">Redakto</Link>
+                <button
+                  onClick={() => deleteSponsor(sponsor.id)}
+                  className="bg-red-500 text-white px-4 py-2 ml-2"
+                >
+                  Fshi
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

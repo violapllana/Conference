@@ -18,8 +18,6 @@ const { createFeedback, getFeedbacks, updateFeedback, deleteFeedback } = require
 const { createContactForm, getContactForms, updateContactFormStatus, deleteContactForm } = require('./controller/contactFormController');
 const postRoutes = require('./routes/postRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
-const Post = require('./models/post'); 
-const Sponsor = require('./models/sponsor'); 
 const { createItem, getItems, updateItem, deleteItem } = require('./controller/itemController');
 const { createSponsor, getSponsors, updateSponsor, deleteSponsor } = require('./controller/sponsorController');
 const app = express();
@@ -201,106 +199,6 @@ app.get('/feedback', isAuthenticated, getFeedbacks);    // Merr të gjitha feedb
 app.put('/feedback/:id', isAuthenticated, updateFeedback); // Përditëso feedback
 app.delete('/feedback/:id', isAuthenticated, deleteFeedback); // Fshi feedback
 
-// Rruga për të marrë postimet
-app.get('/posts', (req, res) => {
-  db.query('SELECT * FROM posts', (err, result) => {
-    if (err) {
-      console.error('Gabim gjatë marrjes së postimeve:', err);
-      return res.status(500).send('Gabim gjatë marrjes së postimeve');
-    }
-    res.json(result);
-  });
-});
-
-// Rruga për të shtuar postime
-app.post('/posts', (req, res) => {
-  const { title, content } = req.body;
-  const query = 'INSERT INTO posts (title, content) VALUES (?, ?)';
-  db.query(query, [title, content], (err, result) => {
-    if (err) {
-      console.error('Gabim gjatë shtimit të postimit:', err);
-      return res.status(500).send('Gabim gjatë shtimit të postimit');
-    }
-    res.status(201).send('Postimi u shtua me sukses');
-  });
-});
-
-// Rruga për të edituar postimin
-app.put('/posts/:id', (req, res) => {
-  const { id } = req.params;
-  const { title, content } = req.body;
-  const query = 'UPDATE posts SET title = ?, content = ? WHERE id = ?';
-  db.query(query, [title, content, id], (err, result) => {
-    if (err) {
-      console.error('Gabim gjatë editimit të postimit:', err);
-      return res.status(500).send('Gabim gjatë editimit të postimit');
-    }
-    res.send('Postimi u editua me sukses');
-  });
-});
-
-// Rruga për të fshirë postimin
-app.delete('/posts/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'DELETE FROM posts WHERE id = ?';
-  db.query(query, [id], (err, result) => {
-    if (err) {
-      console.error('Gabim gjatë fshirjes së postimit:', err);
-      return res.status(500).send('Gabim gjatë fshirjes së postimit');
-    }
-    res.send('Postimi u fshi me sukses');
-  });
-});
-
-// Rruga për të marrë sponsorët
-app.get('/sponsors', async (req, res) => {
-  try {
-    const sponsors = await Sponsor.findAll(); // Ensure you are fetching the sponsors correctly
-    res.status(200).json(sponsors);
-  } catch (err) {
-    console.error('Error fetching sponsors:', err);
-    res.status(500).json({ message: 'Error fetching sponsors', error: err });
-  }
-});
-
-app.post('/sponsors', isAuthenticated, async (req, res) => {
-  const { name, details } = req.body;
-  try {
-    const newSponsor = await Sponsor.create({ name, details });
-    res.status(201).json(newSponsor);
-  } catch (err) {
-    console.error('Gabim gjatë shtimit të sponsorit:', err);
-    res.status(500).send('Gabim gjatë shtimit të sponsorit');
-  }
-});
-
-
-// Rruga për të edituar sponsorin
-app.put('/sponsors/:id', (req, res) => {
-  const { id } = req.params;
-  const { name, details } = req.body;
-  const query = 'UPDATE sponsors SET name = ?, details = ? WHERE id = ?';
-  db.query(query, [name, details, id], (err, result) => {
-    if (err) {
-      console.error('Gabim gjatë editimit të sponsorit:', err);
-      return res.status(500).send('Gabim gjatë editimit të sponsorit');
-    }
-    res.send('Sponsor u editua me sukses');
-  });
-});
-
-// Rruga për të fshirë sponsorin
-app.delete('/sponsors/:id', (req, res) => {
-  const { id } = req.params;
-  const query = 'DELETE FROM sponsors WHERE id = ?';
-  db.query(query, [id], (err, result) => {
-    if (err) {
-      console.error('Gabim gjatë fshirjes së sponsorit:', err);
-      return res.status(500).send('Gabim gjatë fshirjes së sponsorit');
-    }
-    res.send('Sponsor u fshi me sukses');
-  });
-});
 
 
 // Contact Form routes
