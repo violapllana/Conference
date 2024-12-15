@@ -1,4 +1,3 @@
-// routes/sponsorRoutes.js
 const express = require('express');
 const router = express.Router();
 const {
@@ -8,10 +7,10 @@ const {
   deleteSponsor,
 } = require('../controller/sponsorController');
 
-// CRUD routes për sponsoret
-router.post('/', createSponsor); // Krijo sponsor
-router.get('/', getSponsors); // Merr të gjithë sponsorët
-router.put('/:id', updateSponsor); // Përditëso sponsor me ID
-router.delete('/:id', deleteSponsor); // Fshi sponsor me ID
+// CRUD routes for sponsors
+router.post('/', createSponsor); // Create sponsor
+router.get('/', getSponsors); // Get all sponsors
+router.put('/:id', updateSponsor); // Update sponsor by ID
+router.delete('/:id', deleteSponsor); // Delete sponsor by ID
 
 module.exports = router;

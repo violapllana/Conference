@@ -1,22 +1,18 @@
-// models/feedback.js
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Lidhja me databazën
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../db');  // Assuming this is your database connection file
 
 const Feedback = sequelize.define('Feedback', {
-  participantId: {
-    type: DataTypes.INTEGER,
+  username: {
+    type: DataTypes.STRING,
     allowNull: false,
-    references: {
-      model: 'Participants',
-      key: 'id',
-    },
   },
-  message: {
+  content: {
     type: DataTypes.TEXT,
     allowNull: false,
   },
 }, {
-  timestamps: true,
+  tableName: 'feedbacks', // Emri i tabelës në bazën e të dhënave
+  timestamps: true, // Nëse keni kolonat `createdAt` dhe `updatedAt`
 });
 
 module.exports = Feedback;

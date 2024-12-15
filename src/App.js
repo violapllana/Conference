@@ -8,9 +8,11 @@ import Home from './components/Home';
 import AboutUs from './components/AboutUs';
 import Menu from "./components/menu";  
 import Dashboard from "./components/Dashboard";  
+import { AddPost, EditPost, PostList } from './components/posts';
+import { AddFeedback, EditFeedback, FeedbackList } from './components/feedback'; // Importing Feedback components
 import { AddItem, EditItem, ItemList } from './components/CrudTest'; 
 import { AddSponsor, EditSponsor, SponsorList } from './components/sponsor'; 
-import ContactForm from './components/contactus';
+import ContactForm from './components/ContactForm';
 import "./App.css"
 
 function App() {
@@ -25,7 +27,6 @@ function App() {
 
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/contact" element={<ContactForm />} />
           <Route path="/menu" element={<Menu />} />
   
           <Route path="/items" element={<ItemList />} />
@@ -36,6 +37,16 @@ function App() {
           <Route path="/sponsors" element={<SponsorList />} />
           <Route path="/add-sponsor" element={<AddSponsor />} />
           <Route path="/edit-sponsor/:id" element={<EditSponsor />} />
+
+          {/* Post Routes */}
+          <Route path="/posts" element={<PostList />} />
+          <Route path="/add-post" element={<AddPost />} />
+          <Route path="/edit-post/:id" element={<EditPost />} />
+
+          {/* Feedback Routes */}
+          <Route path="/feedback" element={<FeedbackList />} /> 
+          <Route path="/add-feedback" element={<AddFeedback />} /> 
+          <Route path="/edit-feedback/:id" element={<EditFeedback />} /> 
 
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactForm />} />

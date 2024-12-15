@@ -1,61 +1,72 @@
-const Contact = require('../models/contact'); // Importo modelin e Contact
+const express = require('express');
+const router = express.Router();
+const ContactForm = require('../models/contactform');
 
-// Shto një kontakt të ri
-const createContact = async (req, res) => {
+// Krijimi i një formulari kontakti të ri
+const createContactForm = async (req, res) => {
   try {
-    const { email, message } = req.body;
-    const newContact = await Contact.create({ email, message });
-    res.status(201).json(newContact);
-  } catch (error) {
-    res.status(500).json({ error: 'Gabim gjatë krijimit të kontaktit' });
-  }
-};
+    const { emri, email, mesazhi } = req.body;
 
-// Merr të gjithë kontaktet
-const getContacts = async (req, res) => {
-  try {
-    const contacts = await Contact.findAll();
-    res.status(200).json(contacts);
-  } catch (error) {
-    res.status(500).json({ error: 'Gabim gjatë marrjes së kontakteve' });
-  }
-};
-
-// Përditëso një kontakt ekzistues
-const updateContact = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { email, message } = req.body;
-
-    const contact = await Contact.findByPk(id);
-    if (!contact) {
-      return res.status(404).json({ error: 'Kontakti nuk u gjet' });
+    if (!emri || !email || !mesazhi) {
+      return res.status(400).json({ message: 'Të gjitha fushat janë të kërkuara.' });
     }
 
-    contact.email = email || contact.email;
-    contact.message = message || contact.message;
+    const newContactForm = await ContactForm.create({
+      emri,
+      email,
+      mesazhi,
+    });
 
-    await contact.save();
-    res.status(200).json(contact);
-  } catch (error) {
-    res.status(500).json({ error: 'Gabim gjatë përditësimit të kontaktit' });
+    res.status(201).json({ message: 'Mesazhi është dërguar me sukses.', data: newContactForm });
+  } catch (err) {
+    res.status(500).json({ message: 'Gabim gjatë dërgimit të mesazhit.', error: err });
   }
 };
 
-// Fshi një kontakt
-const deleteContact = async (req, res) => {
+// Marrja e të gjitha mesazheve nga formulari i kontaktit
+const getContactForms = async (req, res) => {
+  try {
+    const contactForms = await ContactForm.findAll();
+    res.status(200).json(contactForms);
+  } catch (err) {
+    res.status(400).json({ message: 'Gabim në marrjen e mesazheve', error: err });
+  }
+};
+
+// Përditësimi i statusit të një formulari kontakti
+const updateContactFormStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { statusi } = req.body;
+
+    const [updated] = await ContactForm.update({ statusi }, { where: { id } });
+
+    if (updated) {
+      const updatedForm = await ContactForm.findByPk(id);
+      res.status(200).json({ message: 'Statusi u përditësua me sukses.', form: updatedForm });
+    } else {
+      res.status(404).json({ message: 'Formulari i kontaktit nuk u gjet.' });
+    }
+  } catch (err) {
+    res.status(400).json({ message: 'Gabim në përditësimin e statusit', error: err });
+  }
+};
+
+// Fshirja e një formulari kontakti
+const deleteContactForm = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const contact = await Contact.findByPk(id);
-    if (!contact) {
-      return res.status(404).json({ error: 'Kontakti nuk u gjet' });
+    const contactForm = await ContactForm.findByPk(id);
+    if (!contactForm) {
+      return res.status(404).json({ message: 'Formulari i kontaktit nuk u gjet.' });
     }
 
-    await contact.destroy();
-    res.status(200).json({ message: 'Kontakti u fshi me sukses' });
-  } catch (error) {
-    res.status(500).json({ error: 'Gabim gjatë fshirjes së kontaktit' });
+    await contactForm.destroy();
+    res.status(200).json({ message: 'Formulari i kontaktit u fshi me sukses.' });
+  } catch (err) {
+    res.status(400).json({ message: 'Gabim në fshirjen e formularit të kontaktit', error: err });
   }
 };
-module.exports = {createContact,getContacts,updateContact,deleteContact};
+
+module.exports = { createContactForm, getContactForms, updateContactFormStatus, deleteContactForm };
