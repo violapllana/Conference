@@ -65,18 +65,22 @@ const Menu = () => {
         <ul className="flex flex-col space-y-6">
           
 {/* Main "Konferencat" link */}
-<li className="flex items-center">
-  <div className="text-2xl font-semibold">Konferencat</div>
+<li className="flex flex-col items-start bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white hover:shadow-xl transition-shadow duration-300">
+  <div className="text-3xl font-semibold mb-2">Konferencat</div>
+  <p className="text-lg opacity-80 mb-4">Zgjedh njërën nga konferencat dhe konfirmo pjesëmarrjen</p>
 </li>
+
 
 {/* Dynamically display the added items with name and description */}
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   {items.length > 0 ? (
     items.map((item) => (
       <li key={item.id} className="bg-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-        <Link to={`/items/${item.id}`} className="block mb-4 hover:bg-blue-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold">
+        {/* Link to add participant */}
+        <Link to="/add-participant" className="block mb-4 hover:bg-blue-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold">
           <span className="block">{item.name}</span>
         </Link>
+        {/* Item description */}
         <p className="text-sm text-gray-600">{item.description}</p>
       </li>
     ))
@@ -85,10 +89,10 @@ const Menu = () => {
   )}
 </div>
 
+
           {/* Main "Sponsorët" link */}
-          <li className="flex items-center">
-            <div className="text-2xl font-semibold">Sponsorët</div>
-          </li>
+          <li className="flex flex-col items-start bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white hover:shadow-xl transition-shadow duration-300">
+  <div className="text-3xl font-semibold mb-2">Sponzorët</div></li>
 
           {/* Dynamically display the added sponsors with name, email, and phone */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -111,9 +115,8 @@ const Menu = () => {
           </div>
 
          {/* Main "Postimet" link */}
-<li className="flex items-center">
-  <div className="text-2xl font-semibold">Postimet</div>
-</li>
+         <li className="flex flex-col items-start bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white hover:shadow-xl transition-shadow duration-300">
+  <div className="text-3xl font-semibold mb-2">Postimet</div></li>
 
 {/* Dynamically display the added posts with title and content */}
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

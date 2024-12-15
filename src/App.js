@@ -13,6 +13,7 @@ import { AddFeedback, EditFeedback, FeedbackList } from './components/feedback';
 import { AddItem, EditItem, ItemList } from './components/CrudTest'; 
 import { AddSponsor, EditSponsor, SponsorList } from './components/sponsor'; 
 import ContactForm from './components/ContactForm';
+import { AddParticipant, EditParticipant, ParticipantList } from './components/Participant'; 
 import "./App.css"
 
 function App() {
@@ -47,6 +48,11 @@ function App() {
           <Route path="/feedback" element={<FeedbackList />} /> 
           <Route path="/add-feedback" element={<AddFeedback />} /> 
           <Route path="/edit-feedback/:id" element={<EditFeedback />} /> 
+
+           {/* Participant Routes (Added for Participants) */}
+          <Route path="/participants" element={<ParticipantList />} /> 
+          { <Route path="/add-participant" element={<AddParticipant />} /> }
+          { <Route path="/edit-participant/:id" element={<EditParticipant />}/>}
 
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactForm />} />
