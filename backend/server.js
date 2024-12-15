@@ -13,11 +13,8 @@ const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
 const sequelize = require('./db');
 const User = require('./models/user');
-const ContactForm = require('./models/contactform'); 
-const { createFeedback, getFeedbacks, updateFeedback, deleteFeedback } = require('./controller/feedbackController');
-const { createContactForm, getContactForms, updateContactFormStatus, deleteContactForm } = require('./controller/contactFormController');
+const contactRoutes = require('./routes/contactRoutes');
 const postRoutes = require('./routes/postRoutes');
-const feedbackRoutes = require('./routes/feedbackRoutes');
 const { createItem, getItems, updateItem, deleteItem } = require('./controller/itemController');
 const { createSponsor, getSponsors, updateSponsor, deleteSponsor } = require('./controller/sponsorController');
 const app = express();
@@ -189,46 +186,12 @@ app.delete('/sponsors/:id', isAuthenticated, deleteSponsor);
 
 app.use('/posts', postRoutes);
 
+app.use(cors());
 
-// Importo funksionet për feedback (duhet të krijosh këto funksione më vonë)
-app.use('/feedback', isAuthenticated, feedbackRoutes);
-app.use(cors({
-  origin: process.env.CORS_ALLOWED_ORIGIN || 'http://localhost:3000',
-  credentials: true,
-}));
-
-
-// Rrugët për feedback
-app.post('/feedback', isAuthenticated, createFeedback); // Krijo feedback
-app.get('/feedback', isAuthenticated, getFeedbacks);    // Merr të gjitha feedback-et
-app.put('/feedback/:id', isAuthenticated, updateFeedback); // Përditëso feedback
-app.delete('/feedback/:id', isAuthenticated, deleteFeedback); // Fshi feedback
-
-
-
-// Contact Form routes
-router.post('/send-message', createContactForm);
-router.get('/messages', getContactForms);
-router.put('/update-status/:id', updateContactFormStatus);
-router.delete('/delete/:id', deleteContactForm);
+app.use(express.json()); 
+app.use('/contact', contactRoutes); 
 
 app.use('/api', router);  // Kjo lidh rrugët e router-it me /api
-
-app.post('/api/send-message', async (req, res) => {
-  const { emri, email, mesazhi } = req.body;
-
-  if (!emri || !email || !mesazhi) {
-    return res.status(400).json({ message: 'Të gjitha fushat janë të detyrueshme.' });
-  }
-
-  try {
-    const newMessage = await ContactForm.create({ emri, email, mesazhi });
-    res.status(201).json({ message: 'Mesazhi u dërgua me sukses!', data: newMessage });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Gabim në server.' });
-  }
-});
 
 // Initialize server and ensure database and table creation
 const initializeDatabase = async () => {

@@ -38,15 +38,6 @@ function App() {
           <Route path="/add-sponsor" element={<AddSponsor />} />
           <Route path="/edit-sponsor/:id" element={<EditSponsor />} />
 
-          {/* Post Routes */}
-          <Route path="/posts" element={<PostList />} />
-          <Route path="/add-post" element={<AddPost />} />
-          <Route path="/edit-post/:id" element={<EditPost />} />
-
-          {/* Feedback Routes */}
-          <Route path="/feedback" element={<FeedbackList />} /> 
-          <Route path="/add-feedback" element={<AddFeedback />} /> 
-          <Route path="/edit-feedback/:id" element={<EditFeedback />} /> 
 
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactForm />} />
