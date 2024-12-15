@@ -1,3 +1,4 @@
+// src/components/Sponsor.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -11,10 +12,17 @@ const EditSponsor = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  // Funksioni për të marrë të dhënat e sponsorit për redaktim
   useEffect(() => {
     const fetchSponsor = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/sponsors/${id}`, { withCredentials: true });
+        const token = localStorage.getItem('access_token'); // Merr tokenin nga localStorage
+        const response = await axios.get(`http://localhost:5000/sponsors/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true
+        });
         setName(response.data.name);
         setEmail(response.data.email);
         setPhone(response.data.phone);
@@ -27,13 +35,23 @@ const EditSponsor = () => {
     fetchSponsor();
   }, [id]);
 
+  // Funksioni për të përditësuar sponsorin
   const updateSponsor = async () => {
     if (!name || !email) {
       alert('Emri dhe emaili janë të detyrueshme!');
       return;
     }
     try {
-      await axios.put(`http://localhost:5000/sponsors/${id}`, { name, email, phone, address }, { withCredentials: true });
+      const token = localStorage.getItem('access_token'); // Merr tokenin nga localStorage
+      await axios.put(`http://localhost:5000/sponsors/${id}`, 
+        { name, email, phone, address }, 
+        { 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true 
+        }
+      );
       navigate('/sponsors');
     } catch (error) {
       console.error('Gabim gjatë përditësimit të sponsorit:', error.message);
@@ -86,7 +104,16 @@ const AddSponsor = () => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:5000/sponsors', { name, email, phone, address }, { withCredentials: true });
+      const token = localStorage.getItem('access_token'); // Merr tokenin nga localStorage
+      const response = await axios.post('http://localhost:5000/sponsors', 
+        { name, email, phone, address }, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true
+        }
+      );
       if (response.status === 201) {
         alert('Sponsori u krijua me sukses!');
         navigate('/sponsors');
@@ -138,7 +165,13 @@ const SponsorList = () => {
   useEffect(() => {
     const fetchSponsors = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/sponsors', { withCredentials: true });
+        const token = localStorage.getItem('access_token'); // Merr tokenin nga localStorage
+        const response = await axios.get('http://localhost:5000/sponsors', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true
+        });
         setSponsors(response.data);
       } catch (err) {
         setError(err.message);
@@ -152,7 +185,13 @@ const SponsorList = () => {
 
   const deleteSponsor = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/sponsors/${id}`, { withCredentials: true });
+      const token = localStorage.getItem('access_token'); // Merr tokenin nga localStorage
+      await axios.delete(`http://localhost:5000/sponsors/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true
+      });
       setSponsors(sponsors.filter(sponsor => sponsor.id !== id));
     } catch (err) {
       console.error('Gabim gjatë fshirjes së sponsorit:', err.message);
