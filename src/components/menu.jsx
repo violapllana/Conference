@@ -63,28 +63,36 @@ const Menu = () => {
       {/* Secondary Navigation for "Konferencat" */}
       <nav className="bg-gray-300 text-black p-4 rounded-none shadow-md mt-0">
         <ul className="flex flex-col space-y-6">
-          <li className="flex items-center">
-            <div className="text-2xl font-semibold">Konferencat</div>
-          </li>
+          
+{/* Main "Konferencat" link */}
+<li className="flex flex-col items-start bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white hover:shadow-xl transition-shadow duration-300">
+  <div className="text-3xl font-semibold mb-2">Konferencat</div>
+  <p className="text-lg opacity-80 mb-4">Zgjedh njërën nga konferencat dhe konfirmo pjesëmarrjen</p>
+</li>
 
-          {/* Dynamically display the added items with name and description */}
-          {items.length > 0 ? (
-            items.map((item) => (
-              <li key={item.id} className="bg-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <Link to={`/items/${item.id}`} className="block mb-4 hover:bg-blue-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold">
-                  <span className="block">{item.name}</span>
-                </Link>
-                <p className="text-sm text-gray-600">{item.description}</p>
-              </li>
-            ))
-          ) : (
-            <p>No conferences found.</p>
-          )}
+
+{/* Dynamically display the added items with name and description */}
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {items.length > 0 ? (
+    items.map((item) => (
+      <li key={item.id} className="bg-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        {/* Link to add participant */}
+        <Link to="/add-participant" className="block mb-4 hover:bg-blue-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold">
+          <span className="block">{item.name}</span>
+        </Link>
+        {/* Item description */}
+        <p className="text-sm text-gray-600">{item.description}</p>
+      </li>
+    ))
+  ) : (
+    <p>No conferences found.</p>
+  )}
+</div>
+
 
           {/* Main "Sponsorët" link */}
-          <li className="flex items-center">
-            <div className="text-2xl font-semibold">Sponsorët</div>
-          </li>
+          <li className="flex flex-col items-start bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white hover:shadow-xl transition-shadow duration-300">
+  <div className="text-3xl font-semibold mb-2">Sponzorët</div></li>
 
           {/* Dynamically display the added sponsors with name, email, and phone */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -106,24 +114,36 @@ const Menu = () => {
             )}
           </div>
 
-          {/* Main "Postimet" link */}
-          <li className="flex items-center">
-            <div className="text-2xl font-semibold">Postimet</div>
-          </li>
+         {/* Main "Postimet" link */}
+         <li className="flex flex-col items-start bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white hover:shadow-xl transition-shadow duration-300">
+  <div className="text-3xl font-semibold mb-2">Postimet</div></li>
 
-          {/* Dynamically display the added posts with title and content */}
-          {posts.length > 0 ? (
-            posts.map((post) => (
-              <li key={post.id} className="bg-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <h1 to={`/posts/${post.id}`} className="block mb-4 hover:bg-yellow-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold">
-                  <span className="block">{post.title}</span>
-                </h1>
-                <p className="text-sm text-gray-600">{post.content}</p>
-              </li>
-            ))
-          ) : (
-            <p>No posts found.</p>
-          )}
+{/* Dynamically display the added posts with title and content */}
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {posts.length > 0 ? (
+    posts.map((post) => (
+      <li
+        key={post.id}
+        className="bg-gray-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+      >
+        <h1
+          to={`/posts/${post.id}`}
+          className="block mb-4 hover:bg-yellow-500 hover:text-white px-6 py-3 rounded-lg transition duration-300 text-xl font-semibold"
+        >
+          <span className="block"> {post.title}</span>
+        </h1>
+        <p className="text-sm text-gray-600">
+  Pershkrimi:
+  <span className="block mt-2">{post.content}</span>
+</p>
+
+      </li>
+    ))
+  ) : (
+    <p>No posts found.</p>
+  )}
+</div>
+
         </ul>
       </nav>
 
