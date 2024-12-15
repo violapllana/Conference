@@ -1,44 +1,27 @@
+// models/participant.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Database connection
+const sequelize = require('../db'); // Lidhja me databazën
 
 const Participant = sequelize.define('Participant', {
-  firstName: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
-    validate: {
-      notEmpty: true, 
-    },
-  },
-  lastName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true, 
-    validate: {
-      isEmail: true, 
-    },
+    unique: true,
   },
-  birthYear: {
+  conferenceId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    validate: {
-      isInt: true, 
-      min: 1900, 
-      max: new Date().getFullYear(), 
+    references: {
+      model: 'Conferences',
+      key: 'id',
     },
   },
-  schedule: {
-    type: DataTypes.ENUM('paradite', 'pasdite'), 
-    allowNull: false,
-  },
 }, {
-  timestamps: true, 
+  timestamps: true,
 });
 
 module.exports = Participant;

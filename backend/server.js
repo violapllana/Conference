@@ -17,14 +17,8 @@ const postRoutes = require('./routes/postRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const participantRoutes = require('./routes/participantRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
-<<<<<<< HEAD
 const sponsorRoutes = require('./routes/sponsorRoutes');
 const conferenceRoutes = require('./routes/conferenceRoutes');
-=======
-const { createItem, getItems, updateItem, deleteItem } = require('./controller/itemController');
-const { createSponsor, getSponsors, updateSponsor, deleteSponsor } = require('./controller/sponsorController');
-const { createParticipant, getParticipants, updateParticipant, deleteParticipant } = require('./controller/participantController');
->>>>>>> 2c1a62a28611a6b6d60b819dca99eb111728f568
 const app = express();
 const router = express.Router();  // Krijohet instanca e router-it
 
@@ -178,17 +172,9 @@ app.post('/logout', (req, res) => {
 
 app.use(cors());
 
-<<<<<<< HEAD
 app.use(express.json()); 
 
 app.use('/contact', contactRoutes); 
-=======
-// CRUD për pjesëmarrësit 
-app.post('/participants', isAuthenticated, createParticipant); 
-app.get('/participants', isAuthenticated, getParticipants); 
-app.put('/participants/:id', isAuthenticated, updateParticipant); 
-app.delete('/participants/:id', isAuthenticated, deleteParticipant); 
->>>>>>> 2c1a62a28611a6b6d60b819dca99eb111728f568
 app.use('/posts', postRoutes);
 app.use('/api/participants', participantRoutes);
 app.use('/api/feedbacks', feedbackRoutes);
