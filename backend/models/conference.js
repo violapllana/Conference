@@ -1,18 +1,22 @@
-// models/sponsor.js
+// models/conference.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db'); // Lidhja me databazën
 
-const Sponsor = sequelize.define('Sponsor', {
+const Conference = sequelize.define('Conference', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  link: {
+  location: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  date: {
+    type: DataTypes.DATE,
     allowNull: false,
   },
 }, {
   timestamps: true,
 });
 
-module.exports = Sponsor;
+module.exports = Conference;

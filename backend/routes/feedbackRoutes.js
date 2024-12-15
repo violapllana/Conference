@@ -1,11 +1,17 @@
+// routes/feedbackRoutes.js
 const express = require('express');
 const router = express.Router();
-const { createFeedback, getFeedbacks, updateFeedback, deleteFeedback } = require('../controller/feedbackController');
+const {
+  createFeedback,
+  getFeedbacks,
+  updateFeedback,
+  deleteFeedback,
+} = require('../controller/feedbackController');
 
-router.post('/feedback', createFeedback);
-router.get('/feedback', getFeedbacks);
-router.put('/feedback:id', updateFeedback);
-router.delete('/feedback:/id', deleteFeedback);
-
+// CRUD routes për feedback-et
+router.post('/', createFeedback); // Krijo feedback
+router.get('/', getFeedbacks); // Merr të gjitha feedback-et
+router.put('/:id', updateFeedback); // Përditëso feedback me ID
+router.delete('/:id', deleteFeedback); // Fshi feedback me ID
 
 module.exports = router;
