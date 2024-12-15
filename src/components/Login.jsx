@@ -15,20 +15,24 @@ const Login = () => {
         { withCredentials: true }
       );
       console.log('Login response:', response);
-      setMessage('Login ishte i suksesshëm.');
-      window.location.reload();
-      window.location.href = '/';
+  
+      // Kontrollojmë rolin dhe drejtojmë përdoruesin
+      const userRole = response.data.user.role;  // Merr rolin e përdoruesit nga përgjigja
+  
+      if (userRole === 'admin') {
+        // Përdoruesi është admin, drejtoje në dashboard
+        window.location.href = '/dashboard';
+      } else {
+        // Përdoruesi është user, drejtoje në homepage
+        window.location.href = '/';
+      }
+  
     } catch (error) {
       console.error('Login error:', error.response || error.message);
       setMessage('Gabim gjatë login.');
     }
   };
-
   return (
-
-    // <Header />
-    // <Header />
-
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600">
       <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">Hyr</h2>
