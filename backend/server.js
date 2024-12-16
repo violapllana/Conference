@@ -137,7 +137,12 @@ app.post('/login', (req, res, next) => {
         maxAge: 24 * 60 * 60 * 1000,
         sameSite: 'strict'
       });
-      res.status(200).json({ message: 'Login i suksesshëm', user });
+      // Redirect based on role
+      if (user.role === 'admin') {
+        return res.status(200).json({ message: 'Login i suksesshëm', redirect: '/dashboard', user });
+      } else {
+        return res.status(200).json({ message: 'Login i suksesshëm', redirect: '/', user });
+      }
     });
   })(req, res, next);
 });
