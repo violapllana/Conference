@@ -12,6 +12,7 @@ import { AddPost, EditPost, PostList } from './components/posts';
 import { AddFeedback, EditFeedback, FeedbackList } from './components/feedback'; // Importing Feedback components
 import { AddItem, EditItem, ItemList } from './components/CrudTest'; 
 import { AddSponsor, EditSponsor, SponsorList } from './components/sponsor'; 
+import { AddParticipant, EditParticipant, ParticipantList } from './components/Participant'; 
 import ContactForm from './components/ContactForm';
 import "./App.css"
 
@@ -22,9 +23,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
     
-          <Route path="ItemList" element={<ItemList />} />
-          <Route path="/add" element={<AddItem />} />
-
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/menu" element={<Menu />} />
@@ -38,6 +36,11 @@ function App() {
           <Route path="/add-sponsor" element={<AddSponsor />} />
           <Route path="/edit-sponsor/:id" element={<EditSponsor />} />
 
+
+           {/* Participant Routes (Added for Participants) */}
+           <Route path="/participants" element={<ParticipantList />} /> 
+          { <Route path="/add-participant" element={<AddParticipant />} /> }
+          { <Route path="/edit-participant/:id" element={<EditParticipant />}/>}
 
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/contact-us" element={<ContactForm />} />

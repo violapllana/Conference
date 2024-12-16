@@ -33,6 +33,21 @@ const Login = () => {
     }
   };
   return (
+    <div className="flex flex-col min-h-screen">
+    {/* Header */}
+    <header className="bg-blue-600 shadow-md">
+      <nav className="flex justify-between items-center px-8 py-6 text-white">
+        <div className="text-3xl font-extrabold">Menaxhimi i Konferencave</div>
+        <ul className="flex space-x-6 text-lg">
+          <li><a href="/" className="hover:text-teal-300 transition duration-200">Home</a></li>
+          <li><a href="/about-us" className="hover:text-teal-300 transition duration-200">About Us</a></li>
+          <li><a href="/workshops" className="hover:text-teal-300 transition duration-200">Workshops</a></li>
+          <li><a href="/event-highlights" className="hover:text-teal-300 transition duration-200">Event Highlights</a></li>
+          <li><a href="/contact-us" className="hover:text-teal-300 transition duration-200">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600">
       <div className="bg-white p-10 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">Hyr</h2>
@@ -87,6 +102,11 @@ const Login = () => {
           </a>
         </p>
       </div>
+    </div>
+    <footer className="bg-gray-800 text-white text-center py-6">
+        &copy; 2024 Menaxhimi i Konferencave. Të gjitha të drejtat të rezervuara.
+      </footer>
+
     </div>
   );
 };

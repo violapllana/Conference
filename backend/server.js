@@ -17,6 +17,7 @@ const contactRoutes = require('./routes/contactRoutes');
 const postRoutes = require('./routes/postRoutes');
 const { createItem, getItems, updateItem, deleteItem } = require('./controller/itemController');
 const { createSponsor, getSponsors, updateSponsor, deleteSponsor } = require('./controller/sponsorController');
+const { createParticipant, getParticipants, updateParticipant, deleteParticipant } = require('./controller/participantController');
 const app = express();
 const router = express.Router();  // Krijohet instanca e router-it
 
@@ -183,6 +184,12 @@ app.post('/sponsors', isAuthenticated, createSponsor);
 app.get('/sponsors', isAuthenticated, getSponsors);
 app.put('/sponsors/:id', isAuthenticated, updateSponsor);
 app.delete('/sponsors/:id', isAuthenticated, deleteSponsor);
+
+// CRUD për pjesëmarrësit 
+app.post('/participants', isAuthenticated, createParticipant); 
+app.get('/participants', isAuthenticated, getParticipants); 
+app.put('/participants/:id', isAuthenticated, updateParticipant); 
+app.delete('/participants/:id', isAuthenticated, deleteParticipant); 
 
 app.use('/posts', postRoutes);
 
