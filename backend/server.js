@@ -19,6 +19,9 @@ const { createItem, getItems, updateItem, deleteItem } = require('./controller/i
 const { createSponsor, getSponsors, updateSponsor, deleteSponsor } = require('./controller/sponsorController');
 const { createParticipant, getParticipants, updateParticipant, deleteParticipant } = require('./controller/participantController');
 const app = express();
+const path = require('path');
+
+const multer = require('multer');
 const router = express.Router();  // Krijohet instanca e router-it
 
 // Configure session middleware with secure settings
@@ -199,6 +202,48 @@ app.use(express.json());
 app.use('/contact', contactRoutes); 
 
 app.use('/api', router);  // Kjo lidh rrugët e router-it me /api
+
+//Posts
+const fs = require('fs'); // Import fs për të kontrolluar dosjen
+const uploadsDir = path.join(__dirname, 'uploads'); // Definimi i dosjes uploads
+
+// Kontrollo ekzistencën e dosjes "uploads" dhe krijo nëse mungon
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+
+// Konfiguro multer për ruajtjen e skedarëve në "uploads/"
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, 'uploads')); // Ruaj skedarët te dosja "uploads"
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname); // Emër unik për secilin skedar
+  },
+});
+
+const upload = multer({ storage }); // Përdor konfigurimin e inicializuar më sipër
+
+// POST route to handle file upload
+app.post('/posts', upload.single('image'), (req, res) => {
+  const { title, content } = req.body;
+  console.log('File:', req.file); // Kontrollo nëse skedari është ngarkuar
+    console.log('Uploaded file:', req.file);
+  console.log('Body:', req.body);
+
+  const image = req.file ? req.file.filename : null;
+
+  Post.create({ title, content, image })
+    .then((post) => res.json(post))
+    .catch((error) => {
+      console.error('Error saving post:', error);
+      res.status(500).json({ error: 'Error saving post' });
+    });
+});
+
+// Serve static files from the "uploads" folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Initialize server and ensure database and table creation
 const initializeDatabase = async () => {

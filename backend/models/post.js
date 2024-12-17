@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Lidhja me databazën
+const sequelize = require('../db');
 
 const Post = sequelize.define('Post', {
   title: {
@@ -11,11 +11,9 @@ const Post = sequelize.define('Post', {
     allowNull: false,
   },
   image: {
-    type: DataTypes.STRING,  // Rruga e imazhit
+    type: DataTypes.STRING, // Ruaj emrin e skedarit
     allowNull: true,
   },
-}, {
-  timestamps: true,
 });
 
 module.exports = Post;

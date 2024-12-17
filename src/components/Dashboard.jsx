@@ -1,37 +1,38 @@
+
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
-  const [contacts, setContacts] = useState([]);
+   const [contacts, setContacts] = useState([]);
   const [activeTab, setActiveTab] = useState('posts');
   const [editPost, setEditPost] = useState(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState('');
+  const [error, setError] = useState('');
 
   // Fetch posts
   useEffect(() => {
-    fetch('http://localhost:5000/posts')
-      .then((response) => response.json())
-      .then((data) => setPosts(data))
-      .catch((error) => console.error('Error fetching posts:', error));
+    fetchPosts();
   }, []);
 
-  // Fetch contacts
-  useEffect(() => {
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/posts');
+      const data = await response.json();
+      setPosts(data);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  };
+useEffect(() => {
     fetch('http://localhost:5000/contact')
       .then((response) => response.json())
       .then((data) => setContacts(data))
       .catch((error) => console.error('Error fetching contacts:', error));
   }, []);
-
-  const deletePost = (id) => {
-    fetch(`http://localhost:5000/posts/${id}`, { method: 'DELETE' })
-      .then(() => {
-        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
-      })
-      .catch((error) => console.error('Error deleting post:', error));
-  };
 
   const deleteContact = (id) => {
     fetch(`http://localhost:5000/contact/${id}`, { method: 'DELETE' })
@@ -40,53 +41,93 @@ const Dashboard = () => {
       })
       .catch((error) => console.error('Error deleting contact:', error));
   };
+  const deletePost = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/posts/${id}`, {
+        method: 'DELETE',
+      });
 
-  // Handle Add or Edit Post
-  const handlePostSubmit = (e) => {
+      if (response.ok) {
+        console.log(`Postimi me ID ${id} u fshi me sukses`);
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+      } else {
+        const result = await response.json();
+        console.error('Gabim gjatë fshirjes së postimit:', result);
+      }
+    } catch (error) {
+      console.error('Gabim gjatë lidhjes me serverin për fshirjen e postimit:', error);
+    }
+  };
+
+  const handlePostSubmit = async (e) => {
     e.preventDefault();
-    const newPost = { title, content };
-    console.log('Submit post', newPost);
 
-    if (editPost) {
-      // Update the post
-      fetch(`http://localhost:5000/posts/${editPost.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPost),
-      })
-        .then((response) => response.json())
-        .then((updatedPost) => {
-          // Update the post in the list after editing
-          const updatedPosts = posts.map((post) =>
-            post.id === updatedPost.id ? updatedPost : post
-          );
-          setPosts(updatedPosts);
-          setEditPost(null); // Clear the edit state
-          setTitle('');
-          setContent('');
-        })
-        .catch((error) => console.error('Error updating post:', error));
-    } else {
-      // Add a new post
-      fetch('http://localhost:5000/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPost),
-      })
-        .then((response) => response.json())
-        .then((newPostData) => {
-          setPosts((prevPosts) => [...prevPosts, newPostData]);
-          setTitle('');
-          setContent('');
-        })
-        .catch((error) => console.error('Error adding post:', error));
+    // Validation
+    if (!title || !content || (!editPost && !imageFile)) {
+      setError('Ju lutem plotësoni të gjitha fushat dhe ngarkoni një imazh.');
+      return;
+    }
+    setError('');
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+
+    const requestOptions = {
+      method: editPost ? 'PUT' : 'POST',
+      body: formData,
+    };
+
+    const url = editPost
+      ? `http://localhost:5000/posts/${editPost.id}`
+      : 'http://localhost:5000/posts';
+
+    try {
+      const response = await fetch(url, requestOptions);
+
+      if (!response.ok) {
+        const result = await response.json();
+        console.error('Error submitting post:', result);
+        setError('Dështoi shtimi i postimit. Ju lutem kontrolloni të dhënat.');
+        return;
+      }
+
+      const result = await response.json();
+
+      if (editPost) {
+        setPosts((prevPosts) =>
+          prevPosts.map((post) => (post.id === result.id ? result : post))
+        );
+      } else {
+        setPosts((prevPosts) => [...prevPosts, result]);
+      }
+
+      setEditPost(null);
+      setTitle('');
+      setContent('');
+      setImageFile(null);
+      setPreviewImage('');
+    } catch (error) {
+      console.error('Error submitting post:', error);
+      setError('Gabim gjatë lidhjes me serverin.');
     }
   };
 
   const handleEditPost = (post) => {
-    setEditPost(post); // Set the post to be edited
+    setEditPost(post);
     setTitle(post.title);
     setContent(post.content);
+    setPreviewImage(post.image ? `http://localhost:5000/uploads/${post.image}` : '');
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+    setPreviewImage(file ? URL.createObjectURL(file) : '');
   };
 
   return (
@@ -112,13 +153,13 @@ const Dashboard = () => {
       <div className="main-content">
         <h1 className="title">Dashboard</h1>
 
-        {/* Posts Section */}
         {activeTab === 'posts' && (
           <div className="section" id="posts">
             <h2 className="section-title">Posts</h2>
 
             {/* Form to Add or Edit a Post */}
             <form onSubmit={handlePostSubmit} className="add-form">
+              {error && <p className="error-message">{error}</p>}
               <input
                 type="text"
                 placeholder="Post Title"
@@ -134,52 +175,79 @@ const Dashboard = () => {
                 required
                 className="textarea-field"
               />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="file-input"
+              />
+              {previewImage && (
+                <div className="preview-image-container">
+                  <img src={previewImage} alt="Preview" className="preview-image" />
+                </div>
+              )}
               <button type="submit" className="btn-add">
                 {editPost ? 'Save Post' : 'Add Post'}
               </button>
             </form>
 
-            {/* Displaying posts */}
-            <div className="item-list">
-              {posts.map((post) => (
-                <div key={post.id} className="item">
-                  <span>{post.title}</span>
-                  <div>
-                    <button onClick={() => handleEditPost(post)} className="btn-edit">
-                      Edit
-                    </button>
-                    <button onClick={() => deletePost(post.id)} className="btn-delete">
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <div className="post-list">
+  <h3 className="post-list-title">Post List</h3>
+  <div className="post-items">
+    {posts.map((post) => (
+      <div key={post.id} className="post-item">
+        <h4>{post.title}</h4>
+        
+        {/* Shfaqja e imazhit në postim */}
+        {post.image && (
+          <img
+            src={`http://localhost:5000/uploads/${post.image}`} // Përdorni URL-në dinamike për të marrë imazhin
+            className="post-image" // Shtoni klasin për ta stilizuar imazhin
+          />
+        )}
+        
+        <p>{post.content}</p>
+        
+        <div className="post-actions">
+          <button onClick={() => handleEditPost(post)} className="btn-edit">
+            Edit
+          </button>
+          <button onClick={() => deletePost(post.id)} className="btn-delete">
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
           </div>
         )}
+         
+         {activeTab === 'contacts' && (
+  <div className="section" id="contacts">
+    <h2 className="section-title">Contact Messages</h2>
+    <div className="item-list">
+      {contacts.map((contact) => (
+        <div key={contact.id} className="item">
+          <span>{contact.emri} ({contact.email})</span>
+          <p>{contact.mesazhi}</p>
+          <div>
+            <button onClick={() => deleteContact(contact.id)} className="btn-delete">
+              Delete
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
-        {/* Contact Messages Section */}
-        {activeTab === 'contacts' && (
-          <div className="section" id="contacts">
-            <h2 className="section-title">Contact Messages</h2>
-            <div className="item-list">
-              {contacts.map((contact) => (
-                <div key={contact.id} className="item">
-                  <span>{contact.emri} ({contact.email})</span>
-                  <p>{contact.mesazhi}</p>
-                  <div>
-                    <button onClick={() => deleteContact(contact.id)} className="btn-delete">
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
-};
+}; 
+
+
+
 
 export default Dashboard;
