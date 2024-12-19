@@ -1,38 +1,42 @@
 import React, { useState } from 'react';
 
-const ContactUs = () => {
+const ContactUs = ({ onMessageAdded }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [messageContent, setMessageContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
-
-  // Function to add a new message
   const addMessage = (e) => {
     e.preventDefault();
     setLoading(true);
-    const newMessage = { name, email, message: messageContent };
-
+  
+    const newMessage = { emri: name, email, mesazhi: messageContent };
+    console.log('Duke dërguar mesazhin:', newMessage); // Log mesazhin që dërgohet
+  
     fetch('http://localhost:5000/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newMessage),
     })
       .then((response) => response.json())
-      .then(() => {
+      .then((data) => {
+        console.log('Mesazhi u ruajt:', data);
         setName('');
         setEmail('');
         setMessageContent('');
-        setResponseMessage('Message sent successfully!');
+        setResponseMessage('Mesazhi u dërgua me sukses!');
         setLoading(false);
+  
+        // Përditëso mesazhet ose njofto përdoruesin
+        if (onMessageAdded) onMessageAdded();
       })
       .catch((error) => {
-        console.error('Error adding message:', error);
-        setResponseMessage('There was an error sending your message.');
+        console.error('Gabim në API:', error);
+        setResponseMessage('Pati një gabim gjatë dërgimit të mesazhit.');
         setLoading(false);
       });
   };
-
+  
   return (
     <div className="bg-teal-400 min-h-screen flex items-center justify-center">
       <form
@@ -50,6 +54,7 @@ const ContactUs = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          required
         />
         <input
           type="email"
@@ -58,6 +63,7 @@ const ContactUs = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          required
         />
         <textarea
           name="message"
@@ -65,6 +71,7 @@ const ContactUs = () => {
           value={messageContent}
           onChange={(e) => setMessageContent(e.target.value)}
           className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700 resize-none"
+          required
         ></textarea>
         <button
           type="submit"

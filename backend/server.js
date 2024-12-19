@@ -15,11 +15,14 @@ const sequelize = require('./db');
 const User = require('./models/user');
 const contactRoutes = require('./routes/contactRoutes');
 const postRoutes = require('./routes/postRoutes');
+const ContactForm = require('./models/contactForm'); // Modifiko sipas strukturës së projektit
 const { createItem, getItems, updateItem, deleteItem } = require('./controller/itemController');
 const { createSponsor, getSponsors, updateSponsor, deleteSponsor } = require('./controller/sponsorController');
 const { createParticipant, getParticipants, updateParticipant, deleteParticipant } = require('./controller/participantController');
 const app = express();
 const path = require('path');
+const fs = require('fs');
+const Post = require('./models/post'); // Importo modelin "Post"
 
 const multer = require('multer');
 const router = express.Router();  // Krijohet instanca e router-it
@@ -195,55 +198,75 @@ app.put('/participants/:id', isAuthenticated, updateParticipant);
 app.delete('/participants/:id', isAuthenticated, deleteParticipant); 
 
 app.use('/posts', postRoutes);
-
 app.use(cors());
 
 app.use(express.json()); 
-app.use('/contact', contactRoutes); 
+app.use('/contact', contactRoutes);
+app.post('/contact', async (req, res) => {
+  try {
+    const { emri, email, mesazhi } = req.body;
+    const newContact = await ContactForm.create({ emri, email, mesazhi });
+    res.status(201).json({ message: 'Mesazhi u krijua me sukses', contact: newContact });
+  } catch (error) {
+    console.error('Gabim gjatë krijimit të kontaktit:', error);
+    res.status(500).json({ error: 'Dështoi krijimi i mesazhit' });
+  }
+});
+
+
 
 app.use('/api', router);  // Kjo lidh rrugët e router-it me /api
 
-//Posts
-const fs = require('fs'); // Import fs për të kontrolluar dosjen
-const uploadsDir = path.join(__dirname, 'uploads'); // Definimi i dosjes uploads
+app.use(express.urlencoded({ extended: true }));
 
 // Kontrollo ekzistencën e dosjes "uploads" dhe krijo nëse mungon
+const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
-
-// Konfiguro multer për ruajtjen e skedarëve në "uploads/"
+// Ruta për të krijuar postime me imazhe
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'uploads')); // Ruaj skedarët te dosja "uploads"
+    cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + file.originalname); // Emër unik për secilin skedar
-  },
+    cb(null, Date.now() + file.originalname);
+  }
+});
+const upload = multer({ storage: storage });
+
+
+app.post('/add-post', upload.single('image'), async (req, res) => {
+  try {
+      const { title, content } = req.body;
+      const image = req.file ? req.file.filename : null; // Definoni image nga req.file
+      const imageURL = image ? `http://localhost:5000/uploads/${image}` : null;
+
+      console.log('Generated image URL:', imageURL);
+
+      // Ruajtje në databazë
+      const newPost = await Post.create({
+          title,
+          content,
+          imageURL, // Shto URL-në në databazë
+      });
+
+      res.status(201).json(newPost);
+  } catch (err) {
+      console.error('Error creating post:', err);
+      res.status(500).json({ error: 'Failed to create post' });
+  }
 });
 
-const upload = multer({ storage }); // Përdor konfigurimin e inicializuar më sipër
-
-// POST route to handle file upload
-app.post('/posts', upload.single('image'), (req, res) => {
-  const { title, content } = req.body;
-  console.log('File:', req.file); // Kontrollo nëse skedari është ngarkuar
-    console.log('Uploaded file:', req.file);
-  console.log('Body:', req.body);
-
-  const image = req.file ? req.file.filename : null;
-
-  Post.create({ title, content, image })
-    .then((post) => res.json(post))
-    .catch((error) => {
-      console.error('Error saving post:', error);
-      res.status(500).json({ error: 'Error saving post' });
-    });
-});
 
 // Serve static files from the "uploads" folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+sequelize.sync()
+  .then(() => console.log('Database synced'))
+  .catch((error) => console.error('Database sync failed:', error));
+
 
 // Initialize server and ensure database and table creation
 const initializeDatabase = async () => {

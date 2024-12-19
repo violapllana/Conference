@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db');
+const sequelize = require('../db'); // Import the sequelize instance
 
 const ContactForm = sequelize.define('ContactForm', {
   emri: {
@@ -10,7 +10,7 @@ const ContactForm = sequelize.define('ContactForm', {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      isEmail: true,
+      isEmail: true, // Siguron që formati është email
     },
   },
   mesazhi: {
@@ -19,8 +19,7 @@ const ContactForm = sequelize.define('ContactForm', {
   },
   statusi: {
     type: DataTypes.STRING,
-    defaultValue: 'Pending',
-  }
+    defaultValue: 'Pending', // Statusi parazgjedhje
+  },
 });
-
 module.exports = ContactForm;

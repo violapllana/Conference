@@ -108,11 +108,11 @@ const Menu = () => {
             )}
           </div>
 
-          {/* Main "Postimet" link */}
+          Main "Postimet" link
           <li className="flex flex-col items-start bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-lg shadow-lg text-white hover:shadow-xl transition-shadow duration-300">
   <div className="text-3xl font-semibold mb-2">Postimet</div></li>
 
-          {/* Dynamically display the added posts with title and content */}
+          Dynamically display the added posts with title and content
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   {posts.length > 0 ? (
     posts.map((post) => (
