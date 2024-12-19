@@ -1,10 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
+import Sponsors from './sponsor'; // Import Sponsors component
+import Participants from './Participant'; // Import Participants component
+import Items from "./CrudTest";
+
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
-   const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [activeTab, setActiveTab] = useState('posts');
   const [editPost, setEditPost] = useState(null);
   const [title, setTitle] = useState('');
@@ -27,7 +30,9 @@ const Dashboard = () => {
       console.error('Error fetching posts:', error);
     }
   };
-useEffect(() => {
+
+  // Fetch contacts
+  useEffect(() => {
     fetch('http://localhost:5000/contact')
       .then((response) => response.json())
       .then((data) => setContacts(data))
@@ -41,6 +46,7 @@ useEffect(() => {
       })
       .catch((error) => console.error('Error deleting contact:', error));
   };
+
   const deletePost = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/posts/${id}`, {
@@ -148,11 +154,34 @@ useEffect(() => {
         >
           Contact Messages
         </a>
+        <a
+          href="#sponsors"
+          onClick={() => setActiveTab('sponsors')}
+          className={activeTab === 'sponsors' ? 'active' : ''}
+        >
+          Sponsors
+        </a>
+        <a
+          href="#participants"
+          onClick={() => setActiveTab('participants')}
+          className={activeTab === 'participants' ? 'active' : ''}
+        >
+          Participants
+        </a>
+        <a
+  href="#items"
+  onClick={() => setActiveTab('items')}
+  className={activeTab === 'items' ? 'active' : ''}
+>
+  Conferences
+</a>
+
       </div>
 
       <div className="main-content">
         <h1 className="title">Dashboard</h1>
 
+        {/* Posts Tab */}
         {activeTab === 'posts' && (
           <div className="section" id="posts">
             <h2 className="section-title">Posts</h2>
@@ -192,62 +221,82 @@ useEffect(() => {
             </form>
 
             <div className="post-list">
-  <h3 className="post-list-title">Post List</h3>
-  <div className="post-items">
-    {posts.map((post) => (
-      <div key={post.id} className="post-item">
-        <h4>{post.title}</h4>
-        
-        {/* Shfaqja e imazhit në postim */}
-        {post.image && (
-          <img
-            src={`http://localhost:5000/uploads/${post.image}`} // Përdorni URL-në dinamike për të marrë imazhin
-            className="post-image" // Shtoni klasin për ta stilizuar imazhin
-          />
-        )}
-        
-        <p>{post.content}</p>
-        
-        <div className="post-actions">
-          <button onClick={() => handleEditPost(post)} className="btn-edit">
-            Edit
-          </button>
-          <button onClick={() => deletePost(post.id)} className="btn-delete">
-            Delete
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
+              <h3 className="post-list-title">Post List</h3>
+              <div className="post-items">
+                {posts.map((post) => (
+                  <div key={post.id} className="post-item">
+                    <h4>{post.title}</h4>
+
+                    {/* Display Image in Post */}
+                    {post.image && (
+                      <img
+                        src={`http://localhost:5000/uploads/${post.image}`} // Use dynamic URL to fetch image
+                        className="post-image" // Add class to style the image
+                      />
+                    )}
+                    <p>{post.content}</p>
+
+                    <div className="post-actions">
+                      <button onClick={() => handleEditPost(post)} className="btn-edit">
+                        Edit
+                      </button>
+                      <button onClick={() => deletePost(post.id)} className="btn-delete">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
-         
-         {activeTab === 'contacts' && (
-  <div className="section" id="contacts">
-    <h2 className="section-title">Contact Messages</h2>
-    <div className="item-list">
-      {contacts.map((contact) => (
-        <div key={contact.id} className="item">
-          <span>{contact.emri} ({contact.email})</span>
-          <p>{contact.mesazhi}</p>
-          <div>
-            <button onClick={() => deleteContact(contact.id)} className="btn-delete">
-              Delete
-            </button>
+
+        {/* Contacts Tab */}
+        {activeTab === 'contacts' && (
+          <div className="section" id="contacts">
+            <h2 className="section-title">Contact Messages</h2>
+            <div className="item-list">
+              {contacts.map((contact) => (
+                <div key={contact.id} className="item">
+                  <span>{contact.emri} ({contact.email})</span>
+                  <p>{contact.mesazhi}</p>
+                  <div>
+                    <button onClick={() => deleteContact(contact.id)} className="btn-delete">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        )}
+
+        {/* Sponsors Tab */}
+        {activeTab === 'sponsors' && (
+          <div className="section" id="sponsors">
+            <h2 className="section-title">Sponsors</h2>
+            <Sponsors /> {/* Render Sponsors Component */}
+
+          </div>
+        )}
+        {/* Participants Tab */}
+        {activeTab === 'participants' && (
+          <div className="section" id="participants">
+            <h2 className="section-title">Participants</h2>
+            <Participants /> {/* Render Participants Component */}
+          </div>
+        )}
+     {activeTab === 'items' && (
+  <div className="section" id="items">
+    <h2 className="section-title">Conferences</h2>
+    <Items /> {/* Render Items Component */}
   </div>
 )}
 
+        
       </div>
     </div>
   );
-}; 
-
-
-
+};
 
 export default Dashboard;

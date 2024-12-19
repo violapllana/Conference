@@ -1,261 +1,78 @@
-// src/components/Participant.js
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 
-// Komponenti për Shtimin e Pjesëmarrësit
-const AddParticipant = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [birthYear, setBirthYear] = useState('');
-  const [schedule, setSchedule] = useState('paradite');
-  const navigate = useNavigate();
-
-  const addParticipant = async () => {
-    if (!firstName || !lastName || !email || !birthYear) {
-      alert('Të gjitha fushat janë të detyrueshme!');
-      return;
-    }
-    try {
-      const token = localStorage.getItem('access_token');
-      const response = await axios.post('http://localhost:5000/participants', 
-        { firstName, lastName, email, birthYear, schedule }, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true
-        }
-      );
-      if (response.status === 201) {
-        alert('Pjesemarrja u krijua me sukses!');
-        navigate('/menu');
-      }
-    } catch (error) {
-      console.error('Gabim gjatë shtimit të pjesëmarrësit:', error.message);
-      alert('pjesemmarja dështoi. Ju lutemi provoni emer tjeter');
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold mb-4">Shto Pjesëmarrësin</h1>
-      
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emri"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Mbiemri"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emaili"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Viti i Lindjes"
-        type="number"
-        value={birthYear}
-        onChange={(e) => setBirthYear(e.target.value)}
-      />
-      
-      <select
-        className="border border-gray-300 p-2 w-full mb-4"
-        value={schedule}
-        onChange={(e) => setSchedule(e.target.value)}
-      >
-        <option value="paradite">Paradite</option>
-        <option value="pasdite">Pasdite</option>
-      </select>
-
-      <button className="bg-blue-500 text-white px-4 py-2" onClick={addParticipant}>
-        Shto Pjesëmarrësin
-      </button>
-    </div>
-  );
-};
-
-// Komponenti për Redaktimin e Pjesëmarrësit
-const EditParticipant = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [birthYear, setBirthYear] = useState('');
-  const [schedule, setSchedule] = useState('paradite');
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchParticipant = async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        const response = await axios.get(`http://localhost:5000/participants/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true
-        });
-        setFirstName(response.data.firstName);
-        setLastName(response.data.lastName);
-        setEmail(response.data.email);
-        setBirthYear(response.data.birthYear);
-        setSchedule(response.data.schedule);
-      } catch (error) {
-        console.error('Gabim gjatë marrjes së pjesëmarrësit:', error.message);
-      }
-    };
-
-    fetchParticipant();
-  }, [id]);
-
-  const updateParticipant = async () => {
-    if (!firstName || !lastName || !email || !birthYear) {
-      alert('Të gjitha fushat janë të detyrueshme!');
-      return;
-    }
-    try {
-      const token = localStorage.getItem('access_token');
-      await axios.put(`http://localhost:5000/participants/${id}`, 
-        { firstName, lastName, email, birthYear, schedule }, 
-        { 
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true 
-        }
-      );
-      navigate('/participants');
-    } catch (error) {
-      console.error('Gabim gjatë përditësimit të pjesëmarrësit:', error.message);
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold mb-4">Redakto Pjesëmarrësin</h1>
-      
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emri"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Mbiemri"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emaili"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Viti i Lindjes"
-        type="number"
-        value={birthYear}
-        onChange={(e) => setBirthYear(e.target.value)}
-      />
-      
-      <select
-        className="border border-gray-300 p-2 w-full mb-4"
-        value={schedule}
-        onChange={(e) => setSchedule(e.target.value)}
-      >
-        <option value="paradite">Paradite</option>
-        <option value="pasdite">Pasdite</option>
-      </select>
-
-      <button className="bg-blue-500 text-white px-4 py-2" onClick={updateParticipant}>
-        Përditëso Pjesëmarrësin
-      </button>
-    </div>
-  );
-};
-
-// Komponenti për Listën e Pjesëmarrësve
-const ParticipantList = () => {
+const Participants = () => {
   const [participants, setParticipants] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchParticipants = async () => {
-      try {
-        const token = localStorage.getItem('access_token');
-        const response = await axios.get('http://localhost:5000/participants', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true
-        });
-        setParticipants(response.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchParticipants();
   }, []);
 
-  const deleteParticipant = async (id) => {
+  const fetchParticipants = async () => {
     try {
-      const token = localStorage.getItem('access_token');
-      await axios.delete(`http://localhost:5000/participants/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true
+      const response = await fetch('http://localhost:5000/participants', {
+        method: 'GET',
+        credentials: 'include',
       });
-      setParticipants(participants.filter(participant => participant.id !== id));
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch participants');
+      }
+
+      const data = await response.json();
+      setParticipants(data);
     } catch (err) {
-      console.error('Gabim gjatë fshirjes së pjesëmarrësit:', err.message);
+      console.error('Error fetching participants:', err);
+      setError('Failed to fetch participants. Please try again.');
     }
   };
 
-  if (loading) return <p>Po ngarkohen pjesëmarrësit...</p>;
-  if (error) return <p>Gabim: {error}</p>;
+  const deleteParticipant = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/participants/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        setParticipants((prev) => prev.filter((p) => p.id !== id));
+      } else {
+        setError('Error deleting participant.');
+      }
+    } catch (err) {
+      console.error('Error deleting participant:', err);
+    }
+  };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Lista e Pjesëmarrësve</h1>
-      {participants.length === 0 ? (
-        <p>Nuk ka pjesëmarrës të shtuar.</p>
-      ) : (
-        <ul>
-          {participants.map((participant) => (
-            <li key={participant.id} className="mb-4">
-              <h2 className="text-xl font-semibold">{participant.firstName} {participant.lastName}</h2>
-              <p>Email: {participant.email}</p>
-              <p>Viti i Lindjes: {participant.birthYear}</p>
-              <p>Orari: {participant.schedule}</p>
-              <div className="mt-2">
-                <Link to={`/edit-participant/${participant.id}`} className="bg-yellow-500 text-white px-4 py-2">Redakto</Link>
-                <button
-                  onClick={() => deleteParticipant(participant.id)}
-                  className="bg-red-500 text-white px-4 py-2 ml-2"
-                >
-                  Fshi
-                </button>
+    <div className="section">
+      {error && <p className="error-message">{error}</p>}
+
+      <div className="post-list">
+        {participants.length > 0 ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+            {participants.map((participant) => (
+              <div key={participant.id} className="post-item" style={{ width: 'calc(33% - 20px)' }}>
+                <h4>
+                  {participant.firstName} {participant.lastName}
+                </h4>
+                <p>Email: {participant.email}</p>
+                <p>Birth Year: {participant.birthYear}</p>
+                <p>Schedule: {participant.schedule === 'paradite' ? 'Morning' : 'Afternoon'}</p>
+                <div className="post-actions">
+                  <button onClick={() => deleteParticipant(participant.id)} className="btn-delete">
+                    Delete
+                  </button>
+                </div>
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            ))}
+          </div>
+        ) : (
+          <p>No participants found.</p>
+        )}
+      </div>
     </div>
   );
 };
 
-export { AddParticipant, EditParticipant, ParticipantList };
+export default Participants;

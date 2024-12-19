@@ -77,6 +77,7 @@ const Menu = () => {
           <span className="block">{item.name}</span>
         </Link>
         <p className="text-sm text-gray-600">{item.description}</p>
+        <p className="text-sm text-gray-600">Adresa: {item.address}</p>
       </li>
     ))
   ) : (
@@ -125,17 +126,28 @@ const Menu = () => {
         >
           <span className="block"> {post.title}</span>
         </h1>
-        <p className="text-sm text-gray-600">
-  Pershkrimi:
-  <span className="block mt-2">{post.content}</span>
-</p>
 
+        {/* Display image if exists */}
+        {post.image && (
+          <div className="mb-4">
+            <img
+              src={post.image} 
+              className="w-full h-48 object-cover rounded-lg"
+            />
+          </div>
+        )}
+
+        <p className="text-sm text-gray-600">
+          Pershkrimi:
+          <span className="block mt-2">{post.content}</span>
+        </p>
       </li>
     ))
   ) : (
     <p>No posts found.</p>
   )}
 </div>
+
         </ul>
       </nav>
 

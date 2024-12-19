@@ -1,133 +1,185 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 
-
-const AddItem = () => {
+const Items = () => {
+  const [items, setItems] = useState([]); // Initialize as an empty array
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const navigate = useNavigate();
+  const [address, setAddress] = useState('');
+  const [error, setError] = useState('');
+  const [editItem, setEditItem] = useState(null);
 
-  const addItem = async () => {
-    try {
-      await axios.post('http://localhost:5000/items', { name, description }, { withCredentials: true });
-      navigate('/items');
-    } catch (error) {
-      console.error('Error adding item:', error.response || error.message);
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Shto Konferencen</h1>
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emri"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Përshkrimi"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <button className="bg-blue-500 text-white px-4 py-2" onClick={addItem}>Shto</button>
-    </div>
-  );
-};
-
-// Komponenti për redaktimin e item-eve
-const EditItem = () => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchItem();
-  }, [id]);
-
-  const fetchItem = async () => {
-    try {
-      const response = await axios.get(`http://localhost:5000/items/${id}`, { withCredentials: true });
-      setName(response.data.name);
-      setDescription(response.data.description);
-    } catch (error) {
-      console.error('Error fetching item:', error.response || error.message);
-    }
-  };
-
-  const updateItem = async () => {
-    try {
-      await axios.put(`http://localhost:5000/items/${id}`, { name, description }, { withCredentials: true });
-      navigate('/items');
-    } catch (error) {
-      console.error('Error updating item:', error.response || error.message);
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Redakto Item</h1>
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emri"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Përshkrimi"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <button className="bg-blue-500 text-white px-4 py-2" onClick={updateItem}>Përditëso</button>
-    </div>
-  );
-};
-
-// Komponenti për listimin e item-eve
-const ItemList = () => {
-  const [items, setItems] = useState([]);
-  const navigate = useNavigate();
-
+  // Fetch items on component load
   useEffect(() => {
     fetchItems();
   }, []);
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/items', { withCredentials: true });
-      setItems(response.data);
-    } catch (error) {
-      console.error('Error fetching items:', error.response || error.message);
+      const response = await fetch('http://localhost:5000/items', {
+        method: 'GET',
+        credentials: 'include', // Ensures cookies are sent with the request
+      });
+
+      if (!response.ok) {
+        throw new Error('Kërkesa e items ka dështuar');
+      }
+
+      const data = await response.json();
+      setItems(data);
+    } catch (err) {
+      console.error('Gabim në marrjen e objekteve:', err);
+      setError('Gabim gjatë lidhjes me serverin.');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name || !description) {
+      setError('Emri dhe përshkrimi janë të detyrueshme.');
+      return;
+    }
+
+    setError('');
+    const newItem = { name, description, address };
+
+    try {
+      const response = await fetch('http://localhost:5000/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newItem),
+        credentials: 'include',  // Përdor cookies të sesionit
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setItems((prev) => [...prev, result.item]);
+        resetForm();
+      } else {
+        setError('Gabim gjatë krijimit të itemit.');
+      }
+    } catch (err) {
+      console.error('Gabim:', err);
+      setError('Gabim gjatë lidhjes me serverin.');
     }
   };
 
   const deleteItem = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/items/${id}`, { withCredentials: true });
-      setItems(items.filter((item) => item.id !== id));
-    } catch (error) {
-      console.error('Error deleting item:', error.response || error.message);
+      const response = await fetch(`http://localhost:5000/items/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',  // Përdor cookies të sesionit
+      });
+      if (response.ok) {
+        setItems((prev) => prev.filter((item) => item.id !== id));
+      } else {
+        setError('Gabim gjatë fshirjes së itemit.');
+      }
+    } catch (err) {
+      console.error('Gabim gjatë fshirjes së itemit:', err);
+    }
+  };
+
+  const handleEditItem = (item) => {
+    setEditItem(item);
+    setName(item.name);
+    setDescription(item.description);
+    setAddress(item.address);
+  };
+
+  const resetForm = () => {
+    setName('');
+    setDescription('');
+    setAddress('');
+    setEditItem(null);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const updatedItem = { name, description, address };
+
+    try {
+      const response = await fetch(`http://localhost:5000/items/${editItem.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedItem),
+        credentials: 'include',  // Përdor cookies të sesionit
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setItems((prev) =>
+          prev.map((item) =>
+            item.id === result.id ? result : item
+          )
+        );
+        resetForm();
+      } else {
+        setError('Gabim gjatë përditësimit të itemit.');
+      }
+    } catch (err) {
+      console.error('Gabim:', err);
+      setError('Gabim gjatë lidhjes me serverin.');
     }
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Lista e Konferencave</h1>
-      <Link to="/add" className="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block">Shto Konferencen</Link>
-      {items.map((item) => (
-        <div key={item.id} className="border-b py-2">
-          <p><strong>{item.name}</strong>: {item.description}</p>
-          <Link to={`/edit/${item.id}`} className="text-blue-500">Redakto</Link>
-          <button onClick={() => deleteItem(item.id)} className="ml-4 bg-red-500 text-white px-2 py-1">Fshi</button>
-        </div>
-      ))}
+    <div className="section">
+      <form onSubmit={editItem ? handleEditSubmit : handleSubmit} className="add-form">
+        {error && <p className="error-message">{error}</p>}
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+        <button type="submit" className="btn-add">
+          {editItem ? 'Save conference' : 'Add conference'}
+        </button>
+      </form>
+
+      <div className="post-list">
+        {items.length > 0 ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+            {items.map((item) => (
+              <div key={item.id} className="post-item" style={{ width: 'calc(33% - 20px)' }}>
+                <h4>{item.name}</h4>
+                <p>pershkrimi: {item.description}</p>
+                {item.address && <p>Adresa: {item.address}</p>}
+                <div className="post-actions">
+                  <button onClick={() => handleEditItem(item)} className="btn-edit">
+                    Edit
+                  </button>
+                  <button onClick={() => deleteItem(item.id)} className="btn-delete">
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No conference found.</p>
+        )}
+      </div>
     </div>
   );
 };
 
-// Eksporto të gjithë komponentët për t'i përdorur në aplikacionin tënd
-export { AddItem, EditItem, ItemList };
+export default Items;

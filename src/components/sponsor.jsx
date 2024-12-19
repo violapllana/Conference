@@ -1,195 +1,195 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 
-// Komponenti për Redaktimin e Sponsorit
-const EditSponsor = () => {
+const Sponsors = () => {
+  const [sponsors, setSponsors] = useState([]); // Initialize as an empty array
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [editSponsor, setEditSponsor] = useState(null);
 
+  // Fetch sponsors on component load
   useEffect(() => {
-    const fetchSponsor = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/sponsors/${id}`, { withCredentials: true });
-        setName(response.data.name);
-        setEmail(response.data.email);
-        setPhone(response.data.phone);
-        setAddress(response.data.address);
-      } catch (error) {
-        console.error('Gabim gjatë marrjes së sponsorit:', error.message);
-      }
-    };
-
-    fetchSponsor();
-  }, [id]);
-
-  const updateSponsor = async () => {
-    if (!name || !email) {
-      alert('Emri dhe emaili janë të detyrueshme!');
-      return;
-    }
-    try {
-      await axios.put(`http://localhost:5000/sponsors/${id}`, { name, email, phone, address }, { withCredentials: true });
-      navigate('/sponsors');
-    } catch (error) {
-      console.error('Gabim gjatë përditësimit të sponsorit:', error.message);
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Redakto Sponsorin</h1>
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emri"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emaili"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Telefoni"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Adresa"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-      />
-      <button className="bg-blue-500 text-white px-4 py-2" onClick={updateSponsor}>Përditëso Sponsorin</button>
-    </div>
-  );
-};
-
-// Komponenti për Shtimin e Sponsorit
-const AddSponsor = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const navigate = useNavigate();
-
-  const addSponsor = async () => {
-    if (!name || !email) {
-      alert('Emri dhe emaili janë të detyrueshme!');
-      return;
-    }
-    try {
-      const response = await axios.post('http://localhost:5000/sponsors', { name, email, phone, address }, { withCredentials: true });
-      if (response.status === 201) {
-        alert('Sponsori u krijua me sukses!');
-        navigate('/sponsors');
-      }
-    } catch (error) {
-      console.error('Gabim gjatë shtimit të sponsorit:', error.message);
-      alert('Shtimi i sponsorit dështoi. Ju lutemi provoni përsëri.');
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Shto Sponsorin</h1>
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emri"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Emaili"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Telefoni"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-      />
-      <input
-        className="border border-gray-300 p-2 w-full mb-4"
-        placeholder="Adresa"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-      />
-      <button className="bg-blue-500 text-white px-4 py-2" onClick={addSponsor}>Shto Sponsorin</button>
-    </div>
-  );
-};
-
-// Komponenti për Listën e Sponsorëve
-const SponsorList = () => {
-  const [sponsors, setSponsors] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchSponsors = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/sponsors', { withCredentials: true });
-        setSponsors(response.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSponsors();
   }, []);
 
-  const deleteSponsor = async (id) => {
+  const fetchSponsors = async () => {
     try {
-      await axios.delete(`http://localhost:5000/sponsors/${id}`, { withCredentials: true });
-      setSponsors(sponsors.filter(sponsor => sponsor.id !== id));
+      const response = await fetch('http://localhost:5000/sponsors', {
+        method: 'GET',
+        credentials: 'include', // Ensures cookies are sent with the request
+      });
+
+      if (!response.ok) {
+        throw new Error('Kërkesa e sponsorizuar ka dështuar');
+      }
+
+      const data = await response.json();
+      setSponsors(data);
     } catch (err) {
-      console.error('Gabim gjatë fshirjes së sponsorit:', err.message);
+      console.error('Gabim në marrjen e sponsorëve:', err);
+      setError('Gabim gjatë lidhjes me serverin.');
     }
   };
 
-  if (loading) return <p>Po ngarkohen sponsorët...</p>;
-  if (error) return <p>Gabim: {error}</p>;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name || !email) {
+      setError('Emri dhe email-i janë të detyrueshëm.');
+      return;
+    }
+
+    setError('');
+    const newSponsor = { name, email, phone, address };
+
+    try {
+      const response = await fetch('http://localhost:5000/sponsors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newSponsor),
+        credentials: 'include',  // Përdor cookies të sesionit
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setSponsors((prev) => [...prev, result.sponsor]);
+        resetForm();
+      } else {
+        setError('Gabim gjatë krijimit të sponsorit.');
+      }
+    } catch (err) {
+      console.error('Gabim:', err);
+      setError('Gabim gjatë lidhjes me serverin.');
+    }
+  };
+
+  const deleteSponsor = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/sponsors/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',  // Përdor cookies të sesionit
+      });
+      if (response.ok) {
+        setSponsors((prev) => prev.filter((s) => s.id !== id));
+      } else {
+        setError('Gabim gjatë fshirjes së sponsorit.');
+      }
+    } catch (err) {
+      console.error('Gabim gjatë fshirjes së sponsorit:', err);
+    }
+  };
+
+  const handleEditSponsor = (sponsor) => {
+    setEditSponsor(sponsor);
+    setName(sponsor.name);
+    setEmail(sponsor.email);
+    setPhone(sponsor.phone);
+    setAddress(sponsor.address);
+  };
+
+  const resetForm = () => {
+    setName('');
+    setEmail('');
+    setPhone('');
+    setAddress('');
+    setEditSponsor(null);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const updatedSponsor = { name, email, phone, address };
+
+    try {
+      const response = await fetch(`http://localhost:5000/sponsors/${editSponsor.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedSponsor),
+        credentials: 'include',  // Përdor cookies të sesionit
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setSponsors((prev) =>
+          prev.map((sponsor) =>
+            sponsor.id === result.id ? result : sponsor
+          )
+        );
+        resetForm();
+      } else {
+        setError('Gabim gjatë përditësimit të sponsorit.');
+      }
+    } catch (err) {
+      console.error('Gabim:', err);
+      setError('Gabim gjatë lidhjes me serverin.');
+    }
+  };
 
   return (
-    <div>
-      <h1>Lista e Sponsorëve</h1>
-      {sponsors.length === 0 ? (
-        <p>Nuk ka sponsorë të shtuar.</p>
-      ) : (
-        <ul>
-          {sponsors.map((sponsor) => (
-            <li key={sponsor.id} className="mb-4">
-              <h2 className="text-xl font-semibold">{sponsor.name}</h2>
-              <p>Email: {sponsor.email}</p>
-              <p>Telefon: {sponsor.phone}</p>
-              <p>Adresa: {sponsor.address}</p>
-              <div className="mt-2">
-                <Link to={`/edit-sponsor/${sponsor.id}`} className="bg-yellow-500 text-white px-4 py-2">Redakto</Link>
-                <button
-                  onClick={() => deleteSponsor(sponsor.id)}
-                  className="bg-red-500 text-white px-4 py-2 ml-2"
-                >
-                  Fshi
-                </button>
+    <div className="section">
+      <form onSubmit={editSponsor ? handleEditSubmit : handleSubmit} className="add-form">
+        {error && <p className="error-message">{error}</p>}
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Phone"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+        <button type="submit" className="btn-add">
+          {editSponsor ? 'Save Sponsor' : 'Add Sponsor'}
+        </button>
+      </form>
+
+      <div className="post-list">
+        {sponsors.length > 0 ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+            {sponsors.map((sponsor) => (
+              <div key={sponsor.id} className="post-item" style={{ width: 'calc(33% - 20px)' }}>
+                <h4>{sponsor.name}</h4>
+                <p>Email: {sponsor.email}</p>
+                {sponsor.phone && <p>Phone: {sponsor.phone}</p>}
+                {sponsor.address && <p>Address: {sponsor.address}</p>}
+                <div className="post-actions">
+                  <button onClick={() => handleEditSponsor(sponsor)} className="btn-edit">
+                    Edit
+                  </button>
+                  <button onClick={() => deleteSponsor(sponsor.id)} className="btn-delete">
+                    Delete
+                  </button>
+                </div>
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            ))}
+          </div>
+        ) : (
+          <p>No sponsors found.</p>
+        )}
+      </div>
     </div>
   );
 };
 
-export { EditSponsor, AddSponsor, SponsorList };
+export default Sponsors;

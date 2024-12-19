@@ -1,7 +1,5 @@
-// models/item
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db');
-const User = require('./user');
+const sequelize = require('../db'); // Lidhja me databazën
 
 const Item = sequelize.define('Item', {
   name: {
@@ -10,13 +8,14 @@ const Item = sequelize.define('Item', {
   },
   description: {
     type: DataTypes.STRING,
+    allowNull: true,
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  }
+  address: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+}, {
+  timestamps: true, 
 });
-
-Item.belongsTo(User, { foreignKey: 'userId' });
 
 module.exports = Item;
