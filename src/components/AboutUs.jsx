@@ -4,35 +4,40 @@ import { Link } from "react-router-dom";
 const AboutUs = () => {
   return (
     <div className="relative min-h-screen bg-gray-50 text-gray-800">
-     {/* Header */}
-    
-              
-     <header className="bg-blue-600 shadow-md">
-  <nav className="flex justify-between items-center px-8 py-6 text-white">
-    <div className="text-3xl font-extrabold">Menaxhimi i Konferencave</div>
-    <ul className="flex space-x-6 text-lg">
-       <Link to="/" id = "home" className="hover:text-teal-300 transition duration-200">
-           Home
-        </Link>
-      <nav> 
-        <Link to="/about-us" id="about-us" className="hover:text-teal-300 transition duration-200">
-          About Us
-        </Link>
-      </nav>
-      <li>
-        <a href="#" className="hover:text-teal-300 transition duration-200">Workshops</a>
-      </li>
-      <li>
-        <a href="#" className="hover:text-teal-300 transition duration-200">Event Highlights</a>
-      </li>
-      <nav id="contact-us">
-        <Link to="/contact-us" className="hover:text-teal-300 transition duration-200">
-          Contact Us
-        </Link>
-      </nav>
-    </ul>
-  </nav>
-</header>
+       {/* Header */}
+       <header className="bg-blue-600 shadow-md">
+        <nav className="flex justify-between items-center px-8 py-6 text-white">
+          <div className="text-3xl font-extrabold">Menaxhimi i Konferencave</div>
+          <ul className="flex space-x-6 text-lg">
+            <li>
+              <a href="/" className="hover:text-teal-300 transition duration-200">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="/menu" className="hover:text-teal-300 transition duration-200">
+                Menu
+              </a>
+            </li>
+        
+            <li>
+              <a href="/contact-us" className="hover:text-teal-300 transition duration-200">
+                Contact Us
+              </a>
+            </li>
+            <li>
+              <a href="/register" className="hover:text-teal-300 transition duration-200">
+              Register
+              </a>
+            </li>
+            <li>
+              <a href="/login" className="hover:text-teal-300 transition duration-200">
+              Log In
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </header>
 
       {/* Content */}
       <div className="pt-32 max-w-7xl mx-auto text-center">

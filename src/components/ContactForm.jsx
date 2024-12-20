@@ -38,7 +38,42 @@ const ContactUs = ({ onMessageAdded }) => {
   };
   
   return (
-    <div className="bg-teal-400 min-h-screen flex items-center justify-center">
+  
+       <div className="bg-gray-300 flex flex-col  min-h-screen">
+         {/* Header */}
+         <header className="bg-blue-600 shadow-md">
+        <nav className="flex justify-between items-center px-8 py-6 text-white">
+          <div className="text-3xl font-extrabold">Menaxhimi i Konferencave</div>
+          <ul className="flex space-x-6 text-lg">
+            <li>
+              <a href="/" className="hover:text-teal-300 transition duration-200">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="/menu" className="hover:text-teal-300 transition duration-200">
+                Menu
+              </a>
+            </li>
+            <li>
+              <a href="/about-us" className="hover:text-teal-300 transition duration-200">
+             About Us
+              </a>
+            </li>
+      
+            <li>
+              <a href="/register" className="hover:text-teal-300 transition duration-200">
+              Register
+              </a>
+            </li>
+            <li>
+              <a href="/login" className="hover:text-teal-300 transition duration-200">
+              Log In
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </header>
       <form
         onSubmit={addMessage}
         className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md flex flex-col gap-6"
@@ -81,7 +116,13 @@ const ContactUs = ({ onMessageAdded }) => {
           {loading ? 'Sending...' : 'Send Message'}
         </button>
       </form>
+        {/* Footer */}
+        <footer className="bg-gray-800 text-white text-center py-6 mt-auto">
+        &copy; 2024 Menaxhimi i Konferencave. Të gjitha të drejtat të rezervuara.
+      </footer>
     </div>
+  
+    
   );
 };
 

@@ -16,23 +16,28 @@ const MenaxhimiKonferencave = () => {
               </a>
             </li>
             <li>
+              <a href="/menu" className="hover:text-teal-300 transition duration-200">
+                Menu
+              </a>
+            </li>
+            <li>
               <a href="/about-us" className="hover:text-teal-300 transition duration-200">
-                About Us
-              </a>
-            </li>
-            <li>
-              <a href="" className="hover:text-teal-300 transition duration-200">
-                Workshops
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-teal-300 transition duration-200">
-                Event Highlights
+             About Us
               </a>
             </li>
             <li>
               <a href="/contact-us" className="hover:text-teal-300 transition duration-200">
-                Contact
+                Contact Us
+              </a>
+            </li>
+            <li>
+              <a href="/register" className="hover:text-teal-300 transition duration-200">
+              Register
+              </a>
+            </li>
+            <li>
+              <a href="/login" className="hover:text-teal-300 transition duration-200">
+              Log In
               </a>
             </li>
           </ul>
