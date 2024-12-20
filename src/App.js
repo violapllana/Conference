@@ -7,8 +7,6 @@ import Home from './components/Home';
 import AboutUs from './components/AboutUs';
 import Menu from "./components/menu";  
 import Dashboard from "./components/Dashboard";  
-import { AddPost, EditPost, PostList } from './components/posts';
-import { AddFeedback, EditFeedback, FeedbackList } from './components/feedback'; 
 import { AddItem, EditItem, ItemList } from './components/CrudTest'; 
 import { AddSponsor, EditSponsor, SponsorList } from './components/sponsor'; 
 import AddParticipant from './components/addParticipant'; 

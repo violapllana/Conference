@@ -46,20 +46,39 @@ const Menu = () => {
 
   return (
     <div className="font-sans text-gray-800 bg-gray-100 min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="bg-blue-600 shadow-md">
+   {/* Header */}
+   <header className="bg-blue-600 shadow-md">
         <nav className="flex justify-between items-center px-8 py-6 text-white">
           <div className="text-3xl font-extrabold">Menaxhimi i Konferencave</div>
           <ul className="flex space-x-6 text-lg">
-            <li><a href="/" className="hover:text-teal-300 transition duration-200">Home</a></li>
-            <li><a href="/about-us" className="hover:text-teal-300 transition duration-200">About Us</a></li>
-            <li><a href="" className="hover:text-teal-300 transition duration-200">Workshops</a></li>
-            <li><a href="#" className="hover:text-teal-300 transition duration-200">Event Highlights</a></li>
-            <li><a href="/contact-us" className="hover:text-teal-300 transition duration-200">Contact</a></li>
+            <li>
+              <a href="/" className="hover:text-teal-300 transition duration-200">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="/about-us" className="hover:text-teal-300 transition duration-200">
+             About Us
+              </a>
+            </li>
+            <li>
+              <a href="/contact-us" className="hover:text-teal-300 transition duration-200">
+                Contact Us
+              </a>
+            </li>
+            <li>
+              <a href="/register" className="hover:text-teal-300 transition duration-200">
+              Register
+              </a>
+            </li>
+            <li>
+              <a href="/login" className="hover:text-teal-300 transition duration-200">
+              Log In
+              </a>
+            </li>
           </ul>
         </nav>
       </header>
-
       {/* Secondary Navigation for "Konferencat" */}
       <nav className="bg-gray-300 text-black p-4 rounded-none shadow-md mt-0">
         <ul className="flex flex-col space-y-6">
