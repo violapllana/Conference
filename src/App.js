@@ -11,8 +11,8 @@ import { AddPost, EditPost, PostList } from './components/posts';
 import { AddFeedback, EditFeedback, FeedbackList } from './components/feedback'; 
 import { AddItem, EditItem, ItemList } from './components/CrudTest'; 
 import { AddSponsor, EditSponsor, SponsorList } from './components/sponsor'; 
-// import { AddParticipant, EditParticipant, ParticipantList } from './components/Participant'; 
 import AddParticipant from './components/addParticipant'; 
+import Participants from './components/Participant';
 
 
 

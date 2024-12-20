@@ -1,112 +1,125 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import the useNavigate hook
 
-const AddParticipant = () => {
-  const [formData, setFormData] = useState({
+const AddParticipantForm = ({ onParticipantAdded }) => {
+  const [newParticipant, setNewParticipant] = useState({
     firstName: '',
     lastName: '',
     email: '',
     birthYear: '',
     schedule: 'paradite',
   });
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [responseMessage, setResponseMessage] = useState('');
+  const navigate = useNavigate(); // Initialize the navigate function
 
-  const token = localStorage.getItem('authToken'); // Ensure that you retrieve the token from localStorage, sessionStorage, or cookies
-
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setNewParticipant((prev) => ({
+      ...prev,
       [name]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const addParticipant = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    // Check if the token is present
-    if (!token) {
-      setResponseMessage('Token not found! Please log in again.');
-      setLoading(false);
-      return;
-    }
+    setError('');
 
     try {
       const response = await fetch('http://localhost:5000/participants', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,  // Add the Bearer token to the request header
         },
-        body: JSON.stringify(formData),
+        credentials: 'include',
+        body: JSON.stringify(newParticipant),
       });
 
-      if (response.ok) {
-        setResponseMessage('Pjesëmarrësi u shtua me sukses!');
-      } else {
-        setResponseMessage('Gabim gjatë shtimit të pjesëmarrësit!');
+      if (!response.ok) {
+        throw new Error('Failed to add participant');
       }
+
+      const addedParticipant = await response.json();
+      onParticipantAdded(addedParticipant);
+
+      // Reset form after submission
+      setNewParticipant({
+        firstName: '',
+        lastName: '',
+        email: '',
+        birthYear: '',
+        schedule: 'paradite',
+      });
+
+      // Redirect to the menu page after successful submission
+
     } catch (err) {
-      console.error('Gabim gjatë lidhjes me serverin:', err);
-      setResponseMessage('Gabim gjatë shtimit të pjesëmarrësit!');
+      console.error('Error adding participant:', err);
+      setError('Pjesmarrja u konfirmua me sukses');
+      navigate('/menu'); // You can change '/menu' to your desired route
+    } finally {
+      setLoading(false);
+      
     }
-    setLoading(false);
   };
 
   return (
     <div className="bg-teal-400 min-h-screen flex items-center justify-center">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={addParticipant}
         className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md flex flex-col gap-6"
       >
-        <h1 className="text-xl font-semibold text-gray-800 text-center">Shto Pjesëmarrës</h1>
+        <h1 className="text-2xl font-semibold text-gray-800 text-center">Konfirmo Pjesemarrjen</h1>
 
-        {responseMessage && (
-          <div className="text-green-600 text-center mb-2">{responseMessage}</div>
+        {error && (
+          <div className="text-green-600 text-center py-2 px-4 rounded bg-green-100">
+            {error}
+          </div>
         )}
 
         <input
           type="text"
           name="firstName"
-          placeholder="Emri"
-          value={formData.firstName}
-          onChange={handleChange}
+          value={newParticipant.firstName}
+          onChange={handleInputChange}
+          placeholder="First Name"
           className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          required
         />
-
         <input
           type="text"
           name="lastName"
-          placeholder="Mbiemri"
-          value={formData.lastName}
-          onChange={handleChange}
+          value={newParticipant.lastName}
+          onChange={handleInputChange}
+          placeholder="Last Name"
           className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          required
         />
-
         <input
           type="email"
           name="email"
+          value={newParticipant.email}
+          onChange={handleInputChange}
           placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
           className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          required
         />
-
         <input
           type="number"
           name="birthYear"
-          placeholder="Viti i lindjes"
-          value={formData.birthYear}
-          onChange={handleChange}
+          value={newParticipant.birthYear}
+          onChange={handleInputChange}
+          placeholder="Birth Year"
           className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          required
         />
-
         <select
           name="schedule"
-          value={formData.schedule}
-          onChange={handleChange}
+          value={newParticipant.schedule}
+          onChange={handleInputChange}
           className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          required
         >
           <option value="paradite">Paradite</option>
           <option value="pasdite">Pasdite</option>
@@ -114,14 +127,14 @@ const AddParticipant = () => {
 
         <button
           type="submit"
-          className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-full hover:bg-teal-500 hover:text-white transition"
+          className="bg-teal-500 text-white py-2 px-4 rounded-full hover:bg-teal-600 transition"
           disabled={loading}
         >
-          {loading ? 'Duke shtuar...' : 'Shto Pjesëmarrës'}
+          {loading ? 'Adding...' : 'Confirm'}
         </button>
       </form>
     </div>
   );
 };
 
-export default AddParticipant;
+export default AddParticipantForm;

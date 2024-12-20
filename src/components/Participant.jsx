@@ -57,8 +57,8 @@ const Participants = () => {
                   {participant.firstName} {participant.lastName}
                 </h4>
                 <p>Email: {participant.email}</p>
-                <p>Birth Year: {participant.birthYear}</p>
-                <p>Schedule: {participant.schedule === 'paradite' ? 'Morning' : 'Afternoon'}</p>
+                <p>Viti Lindjes: {participant.birthYear}</p>
+                <p>orari: {participant.schedule === 'paradite' ? 'paradite' : 'pasdite'}</p>
                 <div className="post-actions">
                   <button onClick={() => deleteParticipant(participant.id)} className="btn-delete">
                     Delete
