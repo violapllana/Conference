@@ -36,17 +36,22 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
-
   const deleteMessage = async (id) => {
     try {
-      await fetch(`http://localhost:5000/contact/${id}`, { method: 'DELETE' });
-      setMessages(messages.filter((message) => message.id !== id));
+      const response = await fetch(`http://localhost:5000/contact/${id}`, { method: 'DELETE' });
+      
+      if (response.ok) {
+        // Përdorimi i 'contacts' për të filtruar mesazhet
+        setContacts(contacts.filter((message) => message.id !== id));
+      } else {
+        const result = await response.json();
+        console.error('Gabim gjatë fshirjes së mesazhit:', result);
+      }
     } catch (err) {
       console.error('Gabim gjatë fshirjes së mesazhit:', err);
       setError('Pati një gabim gjatë fshirjes së mesazhit.');
     }
   };
-
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -54,11 +59,20 @@ const Dashboard = () => {
   const fetchPosts = async () => {
     try {
       const response = await fetch('http://localhost:5000/posts');
+      
+      // Kontrolloni nëse përgjigjia është e saktë
+      if (!response.ok) {
+        throw new Error('Gabim gjatë lidhjes me serverin');
+      }
+  
+      // Nëse përgjigjia është OK, merrni të dhënat
       const data = await response.json();
       console.log('Fetched posts:', data);
       setPosts(data);
     } catch (error) {
+      // Trajtoni gabimet dhe shtoni një mesazh gabimi në gjendjen e aplikacionit
       console.error('Error fetching posts:', error);
+      setError('Pati një gabim gjatë marrjes së postimeve.');
     }
   };
 
