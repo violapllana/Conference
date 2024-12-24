@@ -15,7 +15,7 @@ const sequelize = require('./db');
 const User = require('./models/user');
 const contactRoutes = require('./routes/contactRoutes');
 const postRoutes = require('./routes/postRoutes');
-const ContactForm = require('./models/contactForm'); // Modifiko sipas strukturës së projektit
+const ContactForm = require('./models/contactform'); // Modifiko sipas strukturës së projektit
 const { createItem, getItems, updateItem, deleteItem } = require('./controller/itemController');
 const { createSponsor, getSponsors, updateSponsor, deleteSponsor } = require('./controller/sponsorController');
 const { createParticipant, getParticipants, updateParticipant, deleteParticipant } = require('./controller/participantController');
@@ -205,11 +205,15 @@ app.use('/contact', contactRoutes);
 app.post('/contact', async (req, res) => {
   try {
     const { emri, email, mesazhi } = req.body;
+    if (!emri || !email || !mesazhi) {
+      return res.status(400).json({ error: 'Të gjitha fushat janë të detyrueshme.' });
+    }
+
     const newContact = await ContactForm.create({ emri, email, mesazhi });
-    res.status(201).json({ message: 'Mesazhi u krijua me sukses', contact: newContact });
+    res.status(201).json({ message: 'Mesazhi u ruajt me sukses.', contact: newContact });
   } catch (error) {
-    console.error('Gabim gjatë krijimit të kontaktit:', error);
-    res.status(500).json({ error: 'Dështoi krijimi i mesazhit' });
+    console.error('Gabim gjatë ruajtjes së të dhënave:', error);
+    res.status(500).json({ error: 'Dështoi ruajtja e mesazhit.' });
   }
 });
 

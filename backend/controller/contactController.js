@@ -1,4 +1,4 @@
-const ContactForm = require('../models/contactForm'); // Import the ContactForm model
+const ContactForm = require('../models/contactform'); // Import the ContactForm model
 
 // Krijimi i mesazhit të kontaktit
 const createContact = async (req, res) => {

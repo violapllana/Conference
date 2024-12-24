@@ -8,6 +8,7 @@ const {
 } = require('../controller/contactController');
 
 // CRUD routes për mesazhet e kontaktit
+
 router.post('/', createContact); // Krijo mesazh
 router.get('/', getContacts); // Merr të gjithë mesazhet
 router.delete('/:id', deleteContact); // Fshi mesazh me ID

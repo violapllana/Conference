@@ -6,13 +6,22 @@ const ContactUs = ({ onMessageAdded }) => {
   const [messageContent, setMessageContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
+
   const addMessage = (e) => {
     e.preventDefault();
     setLoading(true);
-  
+
+    // Validate email format
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailPattern.test(email)) {
+      setResponseMessage('Email nuk është në formatin e saktë!');
+      setLoading(false);
+      return;
+    }
+
     const newMessage = { emri: name, email, mesazhi: messageContent };
-    console.log('Duke dërguar mesazhin:', newMessage); // Log mesazhin që dërgohet
-  
+    console.log('Duke dërguar mesazhin:', newMessage);
+
     fetch('http://localhost:5000/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -21,14 +30,18 @@ const ContactUs = ({ onMessageAdded }) => {
       .then((response) => response.json())
       .then((data) => {
         console.log('Mesazhi u ruajt:', data);
+
+        if (data.message) {
+          setResponseMessage(data.message);
+          if (onMessageAdded) onMessageAdded();
+        } else {
+          setResponseMessage('Pati një gabim gjatë dërgimit të mesazhit.');
+        }
+
         setName('');
         setEmail('');
         setMessageContent('');
-        setResponseMessage('Mesazhi u dërgua me sukses!');
         setLoading(false);
-  
-        // Përditëso mesazhet ose njofto përdoruesin
-        if (onMessageAdded) onMessageAdded();
       })
       .catch((error) => {
         console.error('Gabim në API:', error);
@@ -36,12 +49,10 @@ const ContactUs = ({ onMessageAdded }) => {
         setLoading(false);
       });
   };
-  
+
   return (
-  
-       <div className="bg-gray-300 flex flex-col  min-h-screen">
-         {/* Header */}
-         <header className="bg-blue-600 shadow-md">
+    <div className="bg-gray-300 flex flex-col min-h-screen justify-center items-center">
+      <header className="bg-blue-600 shadow-md w-full">
         <nav className="flex justify-between items-center px-8 py-6 text-white">
           <div className="text-3xl font-extrabold">Menaxhimi i Konferencave</div>
           <ul className="flex space-x-6 text-lg">
@@ -57,26 +68,26 @@ const ContactUs = ({ onMessageAdded }) => {
             </li>
             <li>
               <a href="/about-us" className="hover:text-teal-300 transition duration-200">
-             About Us
+                About Us
               </a>
             </li>
-      
             <li>
               <a href="/register" className="hover:text-teal-300 transition duration-200">
-              Register
+                Register
               </a>
             </li>
             <li>
               <a href="/login" className="hover:text-teal-300 transition duration-200">
-              Log In
+                Log In
               </a>
             </li>
           </ul>
         </nav>
       </header>
+
       <form
         onSubmit={addMessage}
-        className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md flex flex-col gap-6"
+        className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-lg flex flex-col gap-6 mt-12 mb-16"
       >
         <h1 className="text-xl font-semibold text-gray-800 text-center">Contact Us</h1>
         {responseMessage && (
@@ -110,19 +121,17 @@ const ContactUs = ({ onMessageAdded }) => {
         ></textarea>
         <button
           type="submit"
-          className="bg-white border-2 border-teal-500 text-teal-500 py-2 px-4 rounded-full hover:bg-teal-500 hover:text-white transition"
+          className="bg-teal-500 text-white py-2 px-4 rounded-full hover:bg-teal-600 transition"
           disabled={loading}
         >
           {loading ? 'Sending...' : 'Send Message'}
         </button>
       </form>
-        {/* Footer */}
-        <footer className="bg-gray-800 text-white text-center py-6 mt-auto">
-        &copy; 2024 Menaxhimi i Konferencave. Të gjitha të drejtat të rezervuara.
+
+      <footer className="bg-gray-800 text-white text-center py-6 w-full mt-auto">
+        <p>&copy; 2024 Menaxhimi i Konferencave. Të gjitha të drejtat të rezervuara.</p>
       </footer>
     </div>
-  
-    
   );
 };
 
