@@ -1,8 +1,33 @@
-import React from "react";
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link, Navigate } from 'react-router-dom'; // Updated import
 import heroImage from "./image.png";
+import LogoutButton from './LogOutButton'; // Import the LogoutButton component
+import axios from 'axios';
 
 const MenaxhimiKonferencave = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Verifying if the user is logged in
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/user', { withCredentials: true });
+        if (response.status === 200) {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  // Redirect to home if the user is already logged in and tries to access the login page
+  if (isLoggedIn && window.location.pathname === "/login") {
+    return <Navigate to="/" />;  // Updated to use Navigate
+  }
+
   return (
     <div className="font-sans text-gray-800 bg-gray-100">
       {/* Header */}
@@ -11,64 +36,64 @@ const MenaxhimiKonferencave = () => {
           <div className="text-3xl font-extrabold">Menaxhimi i Konferencave</div>
           <ul className="flex space-x-6 text-lg">
             <li>
-              <a href="/" className="hover:text-teal-300 transition duration-200">
-                Home
-              </a>
+              <a href="/" className="hover:text-teal-300 transition duration-200">Home</a>
             </li>
             <li>
-              <a href="/menu" className="hover:text-teal-300 transition duration-200">
-                Menu
-              </a>
+              <a href="/menu" className="hover:text-teal-300 transition duration-200">Menu</a>
             </li>
             <li>
-              <a href="/about-us" className="hover:text-teal-300 transition duration-200">
-             About Us
-              </a>
+              <a href="/about-us" className="hover:text-teal-300 transition duration-200">About Us</a>
             </li>
             <li>
-              <a href="/contact-us" className="hover:text-teal-300 transition duration-200">
-                Contact Us
-              </a>
+              <a href="/contact-us" className="hover:text-teal-300 transition duration-200">Contact Us</a>
             </li>
-            <li>
-              <a href="/register" className="hover:text-teal-300 transition duration-200">
-              Register
-              </a>
-            </li>
-            <li>
-              <a href="/login" className="hover:text-teal-300 transition duration-200">
-              Log In
-              </a>
-            </li>
+            {/* Conditionally hide the login/register links when logged in */}
+            {!isLoggedIn && (
+              <>
+                <li>
+                  <a href="/register" className="hover:text-teal-300 transition duration-200">Register</a>
+                </li>
+                <li>
+                  <a href="/login" className="hover:text-teal-300 transition duration-200">Log In</a>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </header>
 
       {/* Hero Section */}
       <section
-  id="hero"
-  style={{
-    backgroundImage: `url(${heroImage})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    height: "100vh", // Use full viewport height
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    color: "white",
-    textShadow: "0 2px 5px rgba(0, 0, 0, 0.7)",
-    padding: "0 20px", // Ensure some padding for smaller screens
-  }}
->
-  <h1 style={{ fontSize: "4rem", fontWeight: "700" }}>Mirësevini në Platformën tonë</h1>
-  <p style={{ fontSize: "1.5rem", fontWeight: "400", maxWidth: "700px", textAlign: "center" }}>
-    Organizoni konferenca dhe menaxhoni sponsorë me lehtësi!
-  </p>
-  <a href="/menu" className="btn btn-warning btn-lg mt-3">Shiko më shumë</a>
+        id="hero"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          color: "white",
+          textShadow: "0 2px 5px rgba(0, 0, 0, 0.7)",
+          padding: "0 20px",
+        }}
+      >
+        <h1 style={{ fontSize: "4rem", fontWeight: "700" }}>Mirësevini në Platformën tonë</h1>
+        <p style={{ fontSize: "1.5rem", fontWeight: "400", maxWidth: "700px", textAlign: "center" }}>
+          Organizoni konferenca dhe menaxhoni sponsorë me lehtësi!
+        </p>
+        <a href="/menu" className="btn btn-warning btn-lg mt-3">Shiko më shumë</a>
 
-</section>
+        {/* Conditional rendering for the Logout button or login message */}
+        {isLoggedIn ? (
+          <LogoutButton /> // Show logout button if user is logged in
+        ) : (
+          <p className="text-xl mt-4 text-white">Ju nuk jeni të kyqur. </p>
+        )}
+      </section>
+
       {/* Features Section */}
       <section className="py-16 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 text-center">
@@ -80,9 +105,7 @@ const MenaxhimiKonferencave = () => {
                 alt="Planifikimi i Konferencave"
                 className="rounded-xl mb-6 transition-transform transform hover:scale-105"
               />
-              <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-                Planifikoni Konferencat
-              </h3>
+              <h3 className="text-2xl font-semibold text-gray-800 mb-2">Planifikoni Konferencat</h3>
               <p className="text-gray-600">
                 Përgatitni një plan të hollësishëm për çdo event që organizoni. Ne ofrojmë mjete të fuqishme për planifikimin dhe menaxhimin e çdo detaji.
               </p>
@@ -93,9 +116,7 @@ const MenaxhimiKonferencave = () => {
                 alt="Pjesëmarrësit"
                 className="rounded-xl mb-6 transition-transform transform hover:scale-105"
               />
-              <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-                Menaxhoni Pjesëmarrësit
-              </h3>
+              <h3 className="text-2xl font-semibold text-gray-800 mb-2">Menaxhoni Pjesëmarrësit</h3>
               <p className="text-gray-600">
                 Lista e pjesëmarrësve ju mundëson të mbani të dhëna të sakta dhe t’i organizoni ata në mënyrë efikase për çdo aktivitet.
               </p>
@@ -106,9 +127,7 @@ const MenaxhimiKonferencave = () => {
                 alt="Përditësime në Kohë Reale"
                 className="rounded-xl mb-6 transition-transform transform hover:scale-105"
               />
-              <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-                Përditësime të Menjëhershme
-              </h3>
+              <h3 className="text-2xl font-semibold text-gray-800 mb-2">Përditësime të Menjëhershme</h3>
               <p className="text-gray-600">
                 Informoni pjesëmarrësit tuaj për ndryshime të papritura dhe përditësime në kohë reale gjatë gjithë ngjarjes.
               </p>
@@ -119,9 +138,7 @@ const MenaxhimiKonferencave = () => {
 
       {/* Gallery Section */}
       <section className="py-16 bg-white">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          Momentet e Konferencave
-        </h2>
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Momentet e Konferencave</h2>
         <p className="text-center text-gray-600 mb-12">
           Shikoni disa nga momentet më të mira të kapura nga konferencat. Klikoni mbi imazhet për të shikuar më shumë.
         </p>
