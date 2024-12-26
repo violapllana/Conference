@@ -49,7 +49,7 @@ const Menu = () => {
    {/* Header */}
    <header className="bg-blue-600 shadow-md">
         <nav className="flex justify-between items-center px-8 py-6 text-white">
-          <div className="text-3xl font-extrabold">Menaxhimi i Konferencave</div>
+        <div className="text-3xl font-semibold text-center tracking-wide">Rrjeti i Konferencave 🌍💬</div>
           <ul className="flex space-x-6 text-lg">
             <li>
               <a href="/" className="hover:text-teal-300 transition duration-200">
@@ -172,7 +172,7 @@ const Menu = () => {
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white text-center py-6 mt-auto">
-        &copy; 2024 Menaxhimi i Konferencave. Të gjitha të drejtat të rezervuara.
+      <p>&copy; 2024 Rrjeti i Konferencave 🌍💬. Të gjitha të drejtat të rezervuara.</p>
       </footer>
     </div>
   );

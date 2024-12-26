@@ -37,7 +37,7 @@ const AddParticipantForm = ({ onParticipantAdded }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add participant');
+        throw new Error('Dështoi shtimi i pjesëmarrësit');
       }
 
       const addedParticipant = await response.json();
@@ -52,7 +52,7 @@ const AddParticipantForm = ({ onParticipantAdded }) => {
         schedule: 'paradite',
       });
 
-      // Redirect to the menu page after successful submission
+
 
     } catch (err) {
       console.error('Error adding participant:', err);
@@ -60,17 +60,16 @@ const AddParticipantForm = ({ onParticipantAdded }) => {
       navigate('/menu'); // You can change '/menu' to your desired route
     } finally {
       setLoading(false);
-      
     }
   };
 
   return (
-    <div className="bg-teal-400 min-h-screen flex items-center justify-center">
+    <div className="bg-gradient-to-r from-gray-300 to-gray-500 min-h-screen flex items-center justify-center">
       <form
         onSubmit={addParticipant}
-        className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md flex flex-col gap-6"
+        className="bg-white shadow-lg rounded-xl p-10 w-full max-w-md flex flex-col gap-6"
       >
-        <h1 className="text-2xl font-semibold text-gray-800 text-center">Konfirmo Pjesemarrjen</h1>
+        <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">Konfirmo Pjesëmarrjen</h1>
 
         {error && (
           <div className="text-green-600 text-center py-2 px-4 rounded bg-green-100">
@@ -83,8 +82,8 @@ const AddParticipantForm = ({ onParticipantAdded }) => {
           name="firstName"
           value={newParticipant.firstName}
           onChange={handleInputChange}
-          placeholder="First Name"
-          className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          placeholder="Emri"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
           required
         />
         <input
@@ -92,8 +91,8 @@ const AddParticipantForm = ({ onParticipantAdded }) => {
           name="lastName"
           value={newParticipant.lastName}
           onChange={handleInputChange}
-          placeholder="Last Name"
-          className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          placeholder="Mbiemri"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
           required
         />
         <input
@@ -102,7 +101,7 @@ const AddParticipantForm = ({ onParticipantAdded }) => {
           value={newParticipant.email}
           onChange={handleInputChange}
           placeholder="Email"
-          className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
           required
         />
         <input
@@ -110,15 +109,15 @@ const AddParticipantForm = ({ onParticipantAdded }) => {
           name="birthYear"
           value={newParticipant.birthYear}
           onChange={handleInputChange}
-          placeholder="Birth Year"
-          className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          placeholder="Viti i lindjes"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
           required
         />
         <select
           name="schedule"
           value={newParticipant.schedule}
           onChange={handleInputChange}
-          className="border-b-2 border-gray-300 focus:outline-none focus:border-teal-500 py-2 px-4 text-gray-700"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
           required
         >
           <option value="paradite">Paradite</option>
@@ -127,10 +126,10 @@ const AddParticipantForm = ({ onParticipantAdded }) => {
 
         <button
           type="submit"
-          className="bg-teal-500 text-white py-2 px-4 rounded-full hover:bg-teal-600 transition"
+          className="w-full bg-teal-500 text-white py-2 px-4 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
           disabled={loading}
         >
-          {loading ? 'Adding...' : 'Confirm'}
+          {loading ? 'Po shtohet...' : 'Konfirmo'}
         </button>
       </form>
     </div>

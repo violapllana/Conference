@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 const Items = () => {
-  const [items, setItems] = useState([]); // Initialize as an empty array
+  const [items, setItems] = useState([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('');
   const [error, setError] = useState('');
   const [editItem, setEditItem] = useState(null);
 
-  // Fetch items on component load
   useEffect(() => {
     fetchItems();
   }, []);
@@ -17,7 +16,7 @@ const Items = () => {
     try {
       const response = await fetch('http://localhost:5000/items', {
         method: 'GET',
-        credentials: 'include', // Ensures cookies are sent with the request
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -49,7 +48,7 @@ const Items = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newItem),
-        credentials: 'include',  // Përdor cookies të sesionit
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -69,7 +68,7 @@ const Items = () => {
     try {
       const response = await fetch(`http://localhost:5000/items/${id}`, {
         method: 'DELETE',
-        credentials: 'include',  // Përdor cookies të sesionit
+        credentials: 'include',
       });
       if (response.ok) {
         setItems((prev) => prev.filter((item) => item.id !== id));
@@ -106,7 +105,7 @@ const Items = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedItem),
-        credentials: 'include',  // Përdor cookies të sesionit
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -127,55 +126,65 @@ const Items = () => {
   };
 
   return (
-    <div className="section">
-      <form onSubmit={editItem ? handleEditSubmit : handleSubmit} className="add-form">
-        {error && <p className="error-message">{error}</p>}
+    <div>
+      <form
+        onSubmit={editItem ? handleEditSubmit : handleSubmit}
+        className="max-w-xl mx-auto"
+      >
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <input
           type="text"
-          placeholder="Name"
+          placeholder="Conference Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          className="w-full p-3 mb-4 border rounded-md"
         />
-        <input
-          type="text"
-          placeholder="Description"
+        <textarea
+          placeholder="Conference Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           required
+          className="w-full p-3 mb-4 border rounded-md"
         />
         <input
           type="text"
-          placeholder="Address"
+          placeholder="Conference Address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
+          className="w-full p-3 mb-4 border rounded-md"
         />
-        <button type="submit" className="btn-add">
-          {editItem ? 'Save conference' : 'Add conference'}
+        <button
+          type="submit"
+          className="w-full py-3 px-6 bg-blue-500 text-white rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:bg-blue-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 active:bg-blue-700"
+        >
+          {editItem ? 'Save Conference' : 'Add Conference'}
         </button>
       </form>
 
-      <div className="post-list">
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.length > 0 ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            {items.map((item) => (
-              <div key={item.id} className="post-item" style={{ width: 'calc(33% - 20px)' }}>
-                <h4>{item.name}</h4>
-                <p>pershkrimi: {item.description}</p>
-                {item.address && <p>Adresa: {item.address}</p>}
-                <div className="post-actions">
-                  <button onClick={() => handleEditItem(item)} className="btn-edit">
-                    Edit
-                  </button>
-                  <button onClick={() => deleteItem(item.id)} className="btn-delete">
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+          items.map((item) => (
+            <div key={item.id} className="bg-gray-200 p-4 rounded-md shadow-lg">
+              <h4 className="text-xl mb-2">{item.name}</h4>
+              <p className="text-sm mb-2">Description: {item.description}</p>
+              {item.address && <p className="text-sm mb-4">Address: {item.address}</p>}
+              <button
+                onClick={() => handleEditItem(item)}
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mb-2"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => deleteItem(item.id)}
+                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          ))
         ) : (
-          <p>No conference found.</p>
+          <p className="text-gray-500 text-center col-span-3">No conferences found.</p>
         )}
       </div>
     </div>

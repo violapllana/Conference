@@ -116,6 +116,11 @@ const isAuthenticated = (req, res, next) => {
 
 // Auth route for login
 app.post('/login', (req, res, next) => {
+  // Kontrollo nëse përdoruesi është tashmë i kyçur
+  if (req.isAuthenticated()) {
+    return res.status(400).json({ message: 'Jeni tashmë të kyçur!' });
+  }
+
   passport.authenticate('local', async (err, user, info) => {
     if (err) {
       return next(err);
@@ -146,10 +151,12 @@ app.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
+
 // Route to get the logged-in user's information
 app.get('/user', isAuthenticated, (req, res) => {
   res.json({ user: req.user });
 });
+
 
 // Registration route
 app.post('/register', async (req, res) => {
@@ -178,6 +185,7 @@ app.post('/logout', (req, res) => {
     res.status(200).json({ message: 'U çkyçët me sukses.' });
   });
 });
+
 
 // CRUD routes for items
 app.post('/items', isAuthenticated, createItem);

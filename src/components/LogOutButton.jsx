@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const LogoutButton = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate(); // Hook for navigation after logout
+  const navigate = useNavigate(); // Hook për navigim pas logout
 
   // Verifiko që përdoruesi është i kyçur
   useEffect(() => {
@@ -12,10 +12,11 @@ const LogoutButton = () => {
       try {
         const response = await axios.get('http://localhost:5000/user', { withCredentials: true });
         if (response.status === 200) {
-          setIsLoggedIn(true);
+          setIsLoggedIn(true); // Përdoruesi është i kyçur
         }
       } catch (error) {
-        setIsLoggedIn(false);
+        setIsLoggedIn(false); // Përdoruesi nuk është i kyçur
+        alert('Ju nuk jeni të kyçur. Ju lutemi, kyçuni për të përdorur këtë funksionalitet.');
       }
     };
 
@@ -24,22 +25,27 @@ const LogoutButton = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/logout', {}, { withCredentials: true });
-      setIsLoggedIn(false);  // Update the state to logged out
-      navigate('/login'); // Redirect to the home page after logout
+      const response = await axios.post('http://localhost:5000/logout', {}, { withCredentials: true });
+      
+      // Shfaq mesazh alert kur logout bëhet me sukses
+      alert(response.data.message);  // Përdor mesazhin nga backend
+      setIsLoggedIn(false);  // Përdoruesi është çkyçur
+      navigate('/login'); // Ridrejtoje përdoruesin në login pas logout
     } catch (error) {
       console.error('Error during logout:', error.response || error.message);
+      alert('Ka ndodhur një gabim gjatë çkyçjes.');
     }
   };
 
-  if (!isLoggedIn) return null; // Mos shfaq butonin nëse përdoruesi nuk është i kyçur
+  // Nëse përdoruesi nuk është i kyçur, shfaq një mesazh alert
+  if (!isLoggedIn) return null;
 
   return (
     <button
       onClick={handleLogout}
-      className="bg-red-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-600 transition"
+      className="bg-red-400 text-white font-semibold py-2 px-6 rounded-lg shadow-lg hover:bg-red-500 hover:shadow-2xl transition duration-300 ease-in-out"
     >
-      Logout
+      LogOut
     </button>
   );
 };

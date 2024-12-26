@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const Sponsors = () => {
-  const [sponsors, setSponsors] = useState([]); // Initialize as an empty array
+  const [sponsors, setSponsors] = useState([]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -9,7 +9,6 @@ const Sponsors = () => {
   const [error, setError] = useState('');
   const [editSponsor, setEditSponsor] = useState(null);
 
-  // Fetch sponsors on component load
   useEffect(() => {
     fetchSponsors();
   }, []);
@@ -18,7 +17,7 @@ const Sponsors = () => {
     try {
       const response = await fetch('http://localhost:5000/sponsors', {
         method: 'GET',
-        credentials: 'include', // Ensures cookies are sent with the request
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -50,7 +49,7 @@ const Sponsors = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newSponsor),
-        credentials: 'include',  // Përdor cookies të sesionit
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -70,7 +69,7 @@ const Sponsors = () => {
     try {
       const response = await fetch(`http://localhost:5000/sponsors/${id}`, {
         method: 'DELETE',
-        credentials: 'include',  // Përdor cookies të sesionit
+        credentials: 'include',
       });
       if (response.ok) {
         setSponsors((prev) => prev.filter((s) => s.id !== id));
@@ -109,7 +108,7 @@ const Sponsors = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedSponsor),
-        credentials: 'include',  // Përdor cookies të sesionit
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -130,62 +129,76 @@ const Sponsors = () => {
   };
 
   return (
-    <div className="section">
-      <form onSubmit={editSponsor ? handleEditSubmit : handleSubmit} className="add-form">
-        {error && <p className="error-message">{error}</p>}
+    <div>
+      <form
+        onSubmit={editSponsor ? handleEditSubmit : handleSubmit}
+        className="max-w-xl mx-auto"
+      >
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <input
           type="text"
-          placeholder="Name"
+          placeholder="Sponsor Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           required
+          className="w-full p-3 mb-4 border rounded-md"
         />
         <input
           type="email"
-          placeholder="Email"
+          placeholder="Sponsor Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="w-full p-3 mb-4 border rounded-md"
         />
         <input
           type="text"
-          placeholder="Phone"
+          placeholder="Sponsor Phone"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
+          className="w-full p-3 mb-4 border rounded-md"
         />
         <input
           type="text"
-          placeholder="Address"
+          placeholder="Sponsor Address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
+          className="w-full p-3 mb-4 border rounded-md"
         />
-        <button type="submit" className="btn-add">
+        <button
+          type="submit"
+          className="w-full py-3 px-6 bg-blue-500 text-white rounded-lg shadow-lg transition duration-300 ease-in-out transform hover:bg-blue-600 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 active:bg-blue-700"
+        >
           {editSponsor ? 'Save Sponsor' : 'Add Sponsor'}
         </button>
       </form>
 
-      <div className="post-list">
+      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {sponsors.length > 0 ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            {sponsors.map((sponsor) => (
-              <div key={sponsor.id} className="post-item" style={{ width: 'calc(33% - 20px)' }}>
-                <h4>{sponsor.name}</h4>
-                <p>Email: {sponsor.email}</p>
-                {sponsor.phone && <p>Phone: {sponsor.phone}</p>}
-                {sponsor.address && <p>Address: {sponsor.address}</p>}
-                <div className="post-actions">
-                  <button onClick={() => handleEditSponsor(sponsor)} className="btn-edit">
-                    Edit
-                  </button>
-                  <button onClick={() => deleteSponsor(sponsor.id)} className="btn-delete">
-                    Delete
-                  </button>
-                </div>
+          sponsors.map((sponsor) => (
+            <div key={sponsor.id} className="bg-gray-200 p-4 rounded-md shadow-lg">
+              <h4 className="text-xl mb-2">{sponsor.name}</h4>
+              <p className="text-sm mb-2">Email: {sponsor.email}</p>
+              {sponsor.phone && <p className="text-sm mb-2">Phone: {sponsor.phone}</p>}
+              {sponsor.address && <p className="text-sm mb-4">Address: {sponsor.address}</p>}
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => handleEditSponsor(sponsor)}
+                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteSponsor(sponsor.id)}
+                  className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ))
         ) : (
-          <p>No sponsors found.</p>
+          <p className="text-gray-500 text-center col-span-3">No sponsors found.</p>
         )}
       </div>
     </div>
