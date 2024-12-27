@@ -287,32 +287,51 @@ const Dashboard = () => {
           </div>
         )}
 
-        {activeTab === 'contacts' && (
-          <div id="contacts">
-            <h2 className="text-2xl mb-6">Contact Messages</h2>
-            <div className="mt-8">
-              {loading ? (
-                <p>Loading...</p>
-              ) : error ? (
-                <p className="text-red-500">{error}</p>
-              ) : (
-                contacts.map((message) => (
-                  <div key={message.id} className="bg-gray-200 p-4 rounded-md shadow-lg mb-4">
-                    <p><strong>Name:</strong> {message.name}</p>
-                    <p><strong>Email:</strong> {message.email}</p>
-                    <p><strong>Message:</strong> {message.message}</p>
+{activeTab === 'contacts' && (
+  <div id="contacts">
+    <h2 className="text-2xl mb-6">Contact Messages</h2>
+    <div className="mt-8">
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : contacts.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white shadow-md rounded-lg">
+            <thead>
+              <tr className="bg-gray-800 text-white text-left">
+                <th className="py-3 px-6">Name</th>
+                <th className="py-3 px-6">Email</th>
+                <th className="py-3 px-6">Message</th>
+                <th className="py-3 px-6">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contacts.map((message) => (
+                <tr key={message.id} className="border-b">
+                  <td className="py-3 px-6">{message.emri}</td>
+                  <td className="py-3 px-6">{message.email}</td>
+                  <td className="py-3 px-6">{message.mesazhi}</td>
+                  <td className="py-3 px-6">
                     <button
                       onClick={() => deleteMessage(message.id)}
-                      className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 mt-2"
+                      className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
                     >
                       Delete
                     </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p>No messages available.</p>
+      )}
+    </div>
+  </div>
+)}
+
 
         {activeTab === 'sponsors' && (
           <div id="sponsors">
