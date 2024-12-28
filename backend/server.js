@@ -68,16 +68,17 @@ app.use((req, res, next) => {
 const corsOptions = {
   origin: 'http://localhost:3000', // Lejo kërkesa nga frontend-i
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true 
 };
 app.use(cors(corsOptions));
 
-
+// Middleware shtesë për të vendosur header-a të veçantë
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Cross-Origin-Resource-Policy', 'same-site'); // or 'cross-origin'
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true'); // Lejo cookies në frontend
   next();
 });
 app.use(express.static('public'));
