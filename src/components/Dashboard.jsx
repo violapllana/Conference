@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Sponsors from './sponsor';
 import Participants from './Participant';
 import Items from "./CrudTest";
+import Users from "./user";
 
 
 const Dashboard = () => {
@@ -202,6 +203,15 @@ const Dashboard = () => {
         >
           Conferences
         </a>
+        <a
+          href="#users"
+          onClick={() => setActiveTab('users')}
+          className={`block py-2 px-4 mb-4 rounded ${activeTab === 'users' ? 'bg-teal-400' : 'hover:bg-teal-600'}`}
+        >
+          Users
+        </a>
+
+
       </div>
 
       <div className="flex-1 p-6 bg-gray-100">
@@ -324,6 +334,14 @@ const Dashboard = () => {
             <Items />
           </div>
         )}
+{activeTab === 'users' && (
+  <div id="users">
+    <h2 className="text-2xl mb-6">Users</h2>
+    <Users /> 
+  </div>
+)}
+
+
       </div>
     </div>
   );

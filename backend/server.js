@@ -151,12 +151,92 @@ app.post('/login', (req, res, next) => {
   })(req, res, next);
 });
 
+app.post('/users', isAuthenticated, async (req, res) => {
+  const { username, password, role } = req.body; // Sigurohuni që këto fushat të dërgohen
 
+  if (!username || !password || !role) {
+    return res.status(400).json({ error: 'Të gjitha fushat janë të detyrueshme.' });
+  }
+
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    const newUser = await User.create({
+      username,
+      password: hash,
+      role, // Rol default ose i specifikuar (user/admin)
+    });
+    res.status(201).json(newUser); // Kthe përdoruesin e krijuar
+  } catch (err) {
+    console.error('Error creating user:', err);
+    res.status(500).json({ error: 'Dështoi krijimi i përdoruesit.' });
+  }
+});
 // Route to get the logged-in user's information
+app.get('/users', isAuthenticated, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Për këtë kërkesë kërkohet rol administratori.' });
+    }
+    const users = await User.findAll(); // Merr të gjithë përdoruesit nga databaza
+    res.status(200).json(users); // Kthe listën e përdoruesve
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ error: 'Dështoi marrja e përdoruesve.' });
+  }
+});
+
 app.get('/user', isAuthenticated, (req, res) => {
   res.json({ user: req.user });
 });
 
+app.delete('/users/:id', isAuthenticated, async (req, res) => {
+  const { id } = req.params;
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Për këtë kërkesë kërkohet rol administratori.' });
+  }
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'Përdoruesi nuk u gjet.' });
+    }
+
+    await user.destroy();
+    res.status(200).json({ message: 'Përdoruesi u fshi me sukses.' });
+  } catch (err) {
+    console.error('Error deleting user:', err);
+    res.status(500).json({ error: 'Dështoi fshirja e përdoruesit.' });
+  }
+});
+app.put('/users/:id', isAuthenticated, async (req, res) => {
+  const { id } = req.params;
+  const { username, password, role } = req.body;
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Për këtë kërkesë kërkohet rol administratori.' });
+  }
+
+  try {
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'Përdoruesi nuk u gjet.' });
+    }
+
+    if (username) user.username = username;
+    if (role) user.role = role;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    await user.save();
+    res.status(200).json(user); // Return updated user data
+  } catch (err) {
+    console.error('Error updating user:', err);
+    res.status(500).json({ error: 'Dështoi përditësimi i përdoruesit.' });
+  }
+});
 
 // Registration route
 app.post('/register', async (req, res) => {
