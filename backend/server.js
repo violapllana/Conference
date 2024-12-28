@@ -49,17 +49,38 @@ app.use(flash());
 app.use(helmet());
 
 // Configure rate limiting for DDoS protection
+
+
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000, // 15 minuta
+  max: 100, // Limiti për numrin e kërkesave
+  message: 'Përshpejtimi i kërkesave është i kufizuar!'
 });
 app.use(limiter);
 
+
 // Configure body parser and CORS
-app.use(cors({
-  origin: 'http://localhost:3000', // Frontend URL
-  credentials: true // Allow credentials (cookies) to be sent
-}));
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-site');  // or 'cross-origin' based on your scenario
+  next();
+});
+
+const corsOptions = {
+  origin: 'http://localhost:3000', // Lejo kërkesa nga frontend-i
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type']
+};
+app.use(cors(corsOptions));
+
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-site'); // or 'cross-origin'
+  next();
+});
+app.use(express.static('public'));
 app.use(bodyParser.json());
 
 // Logging middleware to debug session and user
@@ -326,7 +347,19 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + file.originalname);
   }
 });
-const upload = multer({ storage: storage });
+
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ['image/jpeg', 'image/png'];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      return cb(new Error('Format i skedarit i pavlefshëm!'), false);
+    }
+    cb(null, true);
+  }
+});
+
 
 
 app.post('/add-post', upload.single('image'), async (req, res) => {
@@ -350,10 +383,20 @@ app.post('/add-post', upload.single('image'), async (req, res) => {
       res.status(500).json({ error: 'Failed to create post' });
   }
 });
-
+app.get('/api/posts', async (req, res) => {
+  try {
+    // Merrni të gjitha postimet nga databaza
+    const posts = await Post.findAll();
+    res.json(posts); // Kthejmë postimet nga databaza
+  } catch (err) {
+    console.error('Error fetching posts:', err);
+    res.status(500).json({ error: 'Dështoi marrja e postimeve.' });
+  }
+});
 
 // Serve static files from the "uploads" folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 sequelize.sync()
   .then(() => console.log('Database synced'))

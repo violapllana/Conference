@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sponsors from './sponsor';
 import Participants from './Participant';
@@ -263,7 +262,7 @@ const Dashboard = () => {
                   <div key={post.id} className="bg-gray-200 p-4 rounded-md shadow-lg">
                     <h4 className="text-xl mb-2">{post.title}</h4>
                     <img
-                      src={`http://localhost:5000/uploads/${post.image}`}
+                      src={post.image}
                       alt="Post"
                       className="w-full h-48 object-cover mb-2 rounded-md"
                     />
@@ -315,6 +314,7 @@ const Dashboard = () => {
                   <td className="py-3 px-6">
                     <button
                       onClick={() => deleteMessage(message.id)}
+        
                       className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
                     >
                       Delete
@@ -331,7 +331,6 @@ const Dashboard = () => {
     </div>
   </div>
 )}
-
 
         {activeTab === 'sponsors' && (
           <div id="sponsors">
