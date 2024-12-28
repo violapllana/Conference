@@ -23,9 +23,79 @@ const app = express();
 const path = require('path');
 const fs = require('fs');
 const Post = require('./models/post'); // Importo modelin "Post"
-
 const multer = require('multer');
 const router = express.Router();  // Krijohet instanca e router-it
+
+//Performanca e aplikacionit
+//Chaching with redis 
+const redis = require('redis');
+const client = redis.createClient({
+  host: 'localhost',
+  port: 6379, // Default Redis port
+});
+
+client.on('error', (err) => {
+  console.log('Redis error:', err);
+});
+
+// Cache middleware to store and retrieve data
+const cache = (req, res, next) => {
+  const { id } = req.params;
+  client.get(id, (err, data) => {
+    if (err) throw err;
+    if (data != null) {
+      return res.json(JSON.parse(data)); // Return cached data
+    }
+    next(); // Proceed if data not found in cache
+  });
+};
+
+// Example of caching the response for fetching posts
+app.get('/posts/:id', cache, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await Post.findByPk(id);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    // Cache the result before sending it to the client
+    client.setex(id, 3600, JSON.stringify(post)); // Cache for 1 hour (3600 seconds)
+    res.json(post);
+  } catch (err) {
+    console.error('Error fetching post:', err);
+    res.status(500).json({ error: 'Failed to fetch post' });
+  }
+});
+
+//Load Balancing 
+const cluster = require('cluster');
+const os = require('os');
+const numCPUs = os.cpus().length; // Number of CPU cores
+
+if (cluster.isMaster) {
+  // Fork workers based on the number of CPU cores
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
+} else {
+  // Worker processes handle the HTTP requests
+  const express = require('express');
+  const app = express();
+
+  app.get('/', (req, res) => {
+    res.send('Hello, World!');
+  });
+
+  app.listen(process.env.PORT || 5000, () => {
+    console.log(`Server running on port ${process.env.PORT || 5000}`);
+  });
+}
+
 
 // Configure session middleware with secure settings
 app.use(session({
