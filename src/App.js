@@ -8,9 +8,8 @@ import AboutUs from "./components/AboutUs";
 import Menu from "./components/menu";
 import Dashboard from "./components/Dashboard";
 import AddParticipant from "./components/addParticipant";
-import Participants from "./components/Participant";
 import ContactForm from "./components/ContactForm";
-import MenaxhimiKonferencave from "./components/Home"; // Import komponentin e ri
+
 
 import "./App.css";
 

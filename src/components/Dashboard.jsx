@@ -14,7 +14,6 @@ const Dashboard = () => {
   const [content, setContent] = useState('');
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('');
-  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 

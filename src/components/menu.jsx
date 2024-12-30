@@ -151,6 +151,7 @@ const Menu = () => {
           <div className="mb-4">
             <img
               src={post.image} 
+              alt="postimi"
               className="w-full h-48 object-cover rounded-lg"
             />
           </div>
